@@ -1,4 +1,4 @@
-package waktfolio.backend.jwt;
+package waktfolio.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

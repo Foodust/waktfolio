@@ -1,4 +1,4 @@
-package waktfolio.backend.jwt;
+package waktfolio.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -11,13 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import waktfolio.backend.exception.ApplicationErrorCode;
-import waktfolio.backend.exception.ErrorResponse;
+import waktfolio.exception.ApplicationErrorCode;
+import waktfolio.exception.ErrorResponse;
 
 import java.io.IOException;
 

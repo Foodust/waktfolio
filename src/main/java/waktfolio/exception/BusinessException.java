@@ -1,4 +1,4 @@
-package waktfolio.backend.exception;
+package waktfolio.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

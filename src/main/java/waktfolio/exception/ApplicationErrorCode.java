@@ -1,4 +1,4 @@
-package waktfolio.backend.exception;
+package waktfolio.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package waktfolio.backend;
+package waktfolio;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

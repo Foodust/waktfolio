@@ -1,4 +1,4 @@
-package waktfolio.backend.exception;
+package waktfolio.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
