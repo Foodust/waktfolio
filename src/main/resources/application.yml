@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/waktfolio"
+    url: "jdbc:postgresql://43.200.154.182:55432/waktfolio"
     username: postgres
-    password: root
+    password: "waktfolio!@"
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,4 +12,4 @@ jwt:
   secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
   validity : 360000
 server:
-  port: 8081
+  port: 8080

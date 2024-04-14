@@ -16,8 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Content extends BaseEntity {
-    private UUID memberId;exit
-    
+    private UUID memberId;
+
     private UUID groupId;
     private String thumbnailImagePath;
     private String name;
