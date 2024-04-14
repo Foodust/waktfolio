@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import waktfolio.domain.BaseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,7 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Group extends BaseEntity {
+public class ContentGroup extends BaseEntity {
     private UUID memberId;
     private String name;
     private String thumbnailImagePath;

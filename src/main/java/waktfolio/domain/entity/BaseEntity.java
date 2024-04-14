@@ -1,8 +1,11 @@
-package waktfolio.domain;
+package waktfolio.domain.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,12 +19,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
 @Getter
-@SuperBuilder
-@NoArgsConstructor
+@MappedSuperclass
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
-public class BaseEntity {
+@NoArgsConstructor
+@SuperBuilder
+public abstract class BaseEntity {
 
     @Id
     @UuidGenerator
