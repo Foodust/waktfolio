@@ -1,6 +1,7 @@
 services:
   waktfolio-backend:
     hostname: waktfolio-backend
+    container_name: waktfolio-backend
     build: ./
     restart: unless-stopped
     ports:
