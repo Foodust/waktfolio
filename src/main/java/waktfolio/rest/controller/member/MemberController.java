@@ -13,7 +13,6 @@ import waktfolio.rest.dto.member.*;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-@Tag(name = "멤버 관리")
 public class MemberController {
     private final MemberService memberService;
     @PostMapping("/login")
