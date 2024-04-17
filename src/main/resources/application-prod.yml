@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://waktfolio-db:5432/waktfolio"
+    username: postgres
+    password: "waktfolio!@"
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    show-sql: false
+jwt:
+  secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
+  validity : 360000
+server:
+  port: 8081
