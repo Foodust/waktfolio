@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import waktfolio.domain.BaseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class Content extends BaseEntity {
     private String thumbnailImagePath;
     private String name;
     private String objectPath;
-    private Integer likes;
-    private Integer views;
+    private Long likes;
+    private Long views;
     private List<String> tags;
 }

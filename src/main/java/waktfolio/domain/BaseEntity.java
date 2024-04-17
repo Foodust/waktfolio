@@ -1,4 +1,4 @@
-package waktfolio.domain.entity;
+package waktfolio.domain;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
