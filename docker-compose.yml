@@ -9,7 +9,7 @@ services:
       - TZ=Asia/Seoul
     command: java -jar /app.jar -Dspring.profiles.active=prod
     networks:
-      - management-board-network
+      - waktfolio-network
 networks:
-  management-board-network:
+  waktfolio-network:
     external: true
