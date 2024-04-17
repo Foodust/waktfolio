@@ -1,7 +1,7 @@
 package waktfolio.domain.repository.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import waktfolio.domain.entity.Member;
+import waktfolio.domain.entity.member.Member;
 
 import java.util.Optional;
 import java.util.UUID;

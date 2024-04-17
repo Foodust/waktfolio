@@ -1,27 +1,24 @@
-package waktfolio.domain.entity;
+package waktfolio.domain.entity.content;
 
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import waktfolio.domain.BaseEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member extends BaseEntity {
-    private String loginId;
-    private String password;
+public class ContentGroup extends BaseEntity {
+    private UUID memberId;
     private String name;
-    private String profileImagePath;
+    private String thumbnailImagePath;
     private List<String> tags;
     private Boolean useYn;
-
 }

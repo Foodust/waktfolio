@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import waktfolio.application.mapper.member.MemberMapper;
-import waktfolio.domain.entity.Member;
+import waktfolio.domain.entity.member.Member;
 import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.exception.BusinessException;

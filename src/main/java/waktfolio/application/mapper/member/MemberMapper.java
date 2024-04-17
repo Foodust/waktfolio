@@ -1,13 +1,12 @@
 package waktfolio.application.mapper.member;
 
 import org.springframework.stereotype.Component;
-import waktfolio.domain.entity.Member;
+import waktfolio.domain.entity.member.Member;
 import waktfolio.rest.dto.member.LoginMemberResponse;
 import waktfolio.rest.dto.member.MemberProfileResponse;
 import waktfolio.rest.dto.member.RegisterMemberRequest;
 import waktfolio.rest.dto.member.UpdateMemberRequest;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
