@@ -11,10 +11,7 @@ import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
-import waktfolio.rest.dto.member.LoginMemberRequest;
-import waktfolio.rest.dto.member.LoginMemberResponse;
-import waktfolio.rest.dto.member.MemberProfileResponse;
-import waktfolio.rest.dto.member.RegisterMemberRequest;
+import waktfolio.rest.dto.member.*;
 
 import java.util.UUID;
 
@@ -38,6 +35,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void update(HttpServletRequest request, UpdateMemberRequest updateMemberRequest) {
+        UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
+        Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
+        memberMapper.memberUpdateFrom(member,updateMemberRequest);
+    }
+
+    @Override
     public void register(RegisterMemberRequest registerMemberRequest) {
         memberRepository.findByLoginId(registerMemberRequest.getLoginId()).ifPresent( a->{throw BusinessException.ALREADY_EXISTS_USER_ID();});
         String encodePassword = passwordEncoder.encode(registerMemberRequest.getPassword());
@@ -49,6 +53,8 @@ public class MemberServiceImpl implements MemberService {
     public MemberProfileResponse profile(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
-        return null;
+        Long totalLike = contentRepository.sumLikeByMemberId(memberId);
+        Long totalView = contentRepository.sumViewByMemberId(memberId);
+        return memberMapper.memberProfileResponseOf(member,totalLike,totalView);
     }
 }

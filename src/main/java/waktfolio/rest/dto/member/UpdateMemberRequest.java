@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class UpdateMemberRequest {
     private String password;
     private String name;
     private String profileImagePath;
+    private List<String> tags;
 }

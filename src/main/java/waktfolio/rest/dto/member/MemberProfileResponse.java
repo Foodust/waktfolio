@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class MemberProfileResponse {
     private String name;
     private String profileImagePath;
-    private Integer totalLike;
-    private Integer totalView;
+    private Long totalLike;
+    private Long totalView;
 }

@@ -22,7 +22,10 @@ public class Content extends BaseEntity {
     private String thumbnailImagePath;
     private String name;
     private String objectPath;
+    private String backGroundPath;
+    private String backGroundColorCode;
     private Long likes;
     private Long views;
     private List<String> tags;
+    private Boolean useYn;
 }

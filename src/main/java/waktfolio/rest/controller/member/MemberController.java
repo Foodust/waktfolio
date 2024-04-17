@@ -24,14 +24,14 @@ public class MemberController {
         memberService.register(registerMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
+    @PatchMapping("")
+    public ResponseEntity<ApiResponse> updateMember(HttpServletRequest request, @RequestBody UpdateMemberRequest updateMemberRequest){
+        memberService.update(request, updateMemberRequest);
+        return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
+    }
     @GetMapping("")
     public ResponseEntity<ApiResponse> getProfile(HttpServletRequest request){
         MemberProfileResponse profile = memberService.profile(request);
         return new ResponseEntity<>(ApiResponse.of(request, profile),HttpStatus.OK);
-    }
-    @PatchMapping("")
-    public ResponseEntity<ApiResponse> updateMember(HttpServletRequest request, @RequestBody UpdateMemberRequest updateMemberRequest){
-
-        return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
 }

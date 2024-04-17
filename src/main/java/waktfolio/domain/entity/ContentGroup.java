@@ -20,4 +20,5 @@ public class ContentGroup extends BaseEntity {
     private String name;
     private String thumbnailImagePath;
     private List<String> tags;
+    private Boolean useYn;
 }

@@ -24,7 +24,9 @@ public class JwtSecurityConfig{
                 .addFilterBefore(new JwtSecurityFilter(jwtTokenUtil), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         .requestMatchers(
-                                "/api/**"
+                                "/api/**",
+                                "/swagger-ui/**",
+                                "/api-docs/**"
                         ).permitAll()
                 );
         return http.build();
