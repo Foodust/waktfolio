@@ -26,7 +26,8 @@ public class JwtSecurityConfig{
                         .requestMatchers(
                                 "/api/**",
                                 "/swagger-ui/**",
-                                "/api-docs/**"
+                                "/api-docs/**",
+                                "/v3/api-docs/**"
                         ).permitAll()
                 );
         return http.build();
