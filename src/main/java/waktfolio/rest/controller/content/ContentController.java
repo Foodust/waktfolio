@@ -36,7 +36,7 @@ public class ContentController {
     }
     @GetMapping("")
     @Tag(name = "콘텐츠 검색하기")
-    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, List<String> tags){
+    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request,@RequestParam List<String> tags){
         List<FindContentGroupResponse> allContentGroup = contentService.getAllContentGroup(tags);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }

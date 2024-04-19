@@ -45,8 +45,9 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public List<FindContentGroupResponse> getAllContentGroup(List<String> tags) {
         List<Content> contents = contentRepository.findByTagLikeIn(tags);
-        List<UUID> contentGroupIds = contents.stream().map(Content::getContentGroupId).toList();
-        List<ContentGroup> contentGroups = contentGroupRepository.findByIdIn(contentGroupIds);
+        List<UUID> contentIds = contents.stream().map(Content::getContentGroupId).toList();
+        List<ContentGroup> contentGroups = contentGroupRepository.findByIdIn(contentIds);
+
         return null;
     }
 

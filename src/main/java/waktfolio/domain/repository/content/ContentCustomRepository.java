@@ -12,5 +12,4 @@ public interface ContentCustomRepository {
     Long sumLikeByMemberId(UUID memberId);
     Long sumViewByMemberId(UUID memberId);
     List<Content> findByTagLikeIn(List<String> tags);
-
 }
