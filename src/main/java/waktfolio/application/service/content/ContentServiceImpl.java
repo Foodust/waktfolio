@@ -2,12 +2,16 @@ package waktfolio.application.service.content;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import waktfolio.application.mapper.content.ContentMapper;
 import waktfolio.domain.entity.content.Content;
+import waktfolio.domain.entity.content.ContentGroup;
 import waktfolio.domain.entity.like.MemberLike;
+import waktfolio.domain.repository.content.ContentGroupRepository;
 import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.like.DayLikeRepository;
 import waktfolio.domain.repository.like.MemberLikeRepository;
@@ -15,6 +19,7 @@ import waktfolio.domain.repository.view.DayViewRepository;
 import waktfolio.domain.repository.view.MemberViewRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
+import waktfolio.rest.dto.BaseListDto;
 import waktfolio.rest.dto.content.*;
 
 import java.util.List;
@@ -29,6 +34,7 @@ public class ContentServiceImpl implements ContentService {
     private final ContentRepository contentRepository;
     private final DayLikeRepository dayLikeRepository;
     private final DayViewRepository dayViewRepository;
+    private final ContentGroupRepository contentGroupRepository;
     private final MemberLikeRepository memberLikeRepository;
     private final MemberViewRepository memberViewRepository;
     @Override
@@ -37,14 +43,17 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public FindContentGroupResponse getAllContentGroup(List<String> tags) {
+    public List<FindContentGroupResponse> getAllContentGroup(List<String> tags) {
+        List<Content> contents = contentRepository.findByTagLikeIn(tags);
+        List<UUID> contentGroupIds = contents.stream().map(Content::getContentGroupId).toList();
+        List<ContentGroup> contentGroups = contentGroupRepository.findByIdIn(contentGroupIds);
         return null;
     }
 
     @Override
-    public List<FindContentDetail> getAllContent(UUID contentGroupId) {
-        List<Content> byContentGroupId = contentRepository.findByContentGroupId(contentGroupId);
-        return byContentGroupId.stream().map(contentMapper::findContentResponseFrom).toList();
+    public List<FindContentDetail> getAllContent(UUID contentGroupId,List<String> tags) {
+        List<Content> contents = contentRepository.findByContentGroupIdAndTagInOrderByTagAscCreateDateDesc(contentGroupId, tags);
+        return contents.stream().map(contentMapper::findContentResponseFrom).toList();
     }
 
     @Override

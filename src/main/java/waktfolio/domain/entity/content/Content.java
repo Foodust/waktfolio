@@ -29,7 +29,7 @@ public class Content extends BaseEntity {
     private Long likes;
     @Setter
     private Long views;
-    private String tags;
+    private String tag;
     private String youtubeLink;
     private String cafeLink;
     private Boolean useYn;

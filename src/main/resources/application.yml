@@ -7,7 +7,7 @@ spring:
     hibernate:
       ddl-auto: update
     database: postgresql
-    show-sql: false
+    show-sql: true
 jwt:
   secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
   validity : 360000

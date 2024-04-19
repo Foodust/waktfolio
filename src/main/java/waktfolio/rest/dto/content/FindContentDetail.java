@@ -2,7 +2,6 @@ package waktfolio.rest.dto.content;
 
 import lombok.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -19,7 +18,7 @@ public class FindContentDetail {
     private String backGroundColorCode;
     private Long likes;
     private Long views;
-    private String tags;
+    private String tag;
     private String youtubeLink;
     private String cafeLink;
 }

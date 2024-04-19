@@ -3,8 +3,10 @@ package waktfolio.application.mapper.content;
 import org.springframework.stereotype.Component;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.like.MemberLike;
+import waktfolio.rest.dto.BaseListDto;
 import waktfolio.rest.dto.content.FindContentDetail;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -21,7 +23,7 @@ public class ContentMapper {
                 .description(content.getDescription())
                 .likes(content.getLikes())
                 .views(content.getViews())
-                .tags(content.getTags())
+                .tag(content.getTag())
                 .backGroundColorCode(content.getBackGroundColorCode())
                 .backGroundPath(content.getBackGroundPath())
                 .cafeLink(content.getCafeLink())

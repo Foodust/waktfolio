@@ -3,11 +3,13 @@ package waktfolio.rest.controller.content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import waktfolio.application.service.content.ContentService;
 import waktfolio.rest.ApiResponse;
+import waktfolio.rest.dto.BaseListDto;
 import waktfolio.rest.dto.content.*;
 
 import java.util.List;
@@ -35,14 +37,14 @@ public class ContentController {
     @GetMapping("")
     @Tag(name = "콘텐츠 검색하기")
     public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, List<String> tags){
-        FindContentGroupResponse content = contentService.getAllContentGroup(tags);
-        return new ResponseEntity<>(ApiResponse.of(request,content), HttpStatus.OK);
+        List<FindContentGroupResponse> allContentGroup = contentService.getAllContentGroup(tags);
+        return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
 
     @GetMapping("/{contentGroupId}")
     @Tag(name = "콘텐츠 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentGroupId) {
-        List<FindContentDetail> allContent = contentService.getAllContent(contentGroupId);
+    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentGroupId, List<String> tags) {
+        List<FindContentDetail> allContent = contentService.getAllContent(contentGroupId, tags);
         return new ResponseEntity<>(ApiResponse.of(request,allContent), HttpStatus.OK);
     }
 }

@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContentRepository extends JpaRepository<Content, UUID>, ContentCustomRepository {
-    List<Content> findByContentGroupId(UUID contentGroupId);
+    List<Content> findByContentGroupIdAndTagInOrderByTagAscCreateDateDesc(UUID contentGroupId, List<String> tag);
 }

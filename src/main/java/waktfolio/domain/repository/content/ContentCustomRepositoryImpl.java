@@ -1,11 +1,18 @@
 package waktfolio.domain.repository.content;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.QContent;
+import waktfolio.rest.dto.BaseListDto;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -14,13 +21,14 @@ import java.util.UUID;
 public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final JPAQueryFactory queryFactory;
     private final QContent content = QContent.content;
+
     @Override
     public Long sumLikeByMemberId(UUID memberId) {
         return queryFactory
                 .select(content.likes.sum())
                 .from(content)
                 .where(
-                    isMemberId(memberId)
+                        isMemberId(memberId)
                 )
                 .fetchOne();
     }
@@ -36,7 +44,28 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .fetchOne();
     }
 
-    private BooleanExpression isMemberId(UUID memberId){
-        return memberId != null ?  content.memberId.eq(memberId) : null;
+    @Override
+    public List<Content> findByTagLikeIn(List<String> tags) {
+        BooleanBuilder isTags = new BooleanBuilder();
+        for (String tag : tags) {
+            isTags.or(content.tag.containsIgnoreCase(tag));
+        }
+        return queryFactory
+                .selectFrom(content)
+                .where(
+                        isTags
+                )
+                .orderBy(
+                        content.createDate.desc()
+                )
+                .fetch();
+    }
+
+    private BooleanExpression isMemberId(UUID memberId) {
+        return memberId != null ? content.memberId.eq(memberId) : null;
+    }
+
+    private BooleanExpression isContentGroupId(UUID contentGroupId) {
+        return contentGroupId != null ? content.contentGroupId.eq(contentGroupId) : null;
     }
 }
