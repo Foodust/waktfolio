@@ -17,5 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DayLike extends BaseEntity {
     private UUID contentId;
+    private UUID contentGroupId;
     private Long likeCount;
 }

@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import waktfolio.domain.entity.QContent;
+import waktfolio.domain.entity.content.QContent;
 
 import java.util.UUID;
 

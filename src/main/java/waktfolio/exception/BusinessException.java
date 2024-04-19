@@ -51,9 +51,9 @@ public class BusinessException extends RuntimeException{
             .applicationErrorCode(ApplicationErrorCode.INVALID_TOKEN)
             .build();
   }
-  public static BusinessException NOT_FOUND_PROJECT(){
+  public static BusinessException NOT_FOUND_CONTENT(){
     return BusinessException.builder()
-            .applicationErrorCode(ApplicationErrorCode.NOT_FOUND_PROJECT)
+            .applicationErrorCode(ApplicationErrorCode.NOT_FOUND_CONTENT)
             .build();
   }
 
@@ -72,26 +72,12 @@ public class BusinessException extends RuntimeException{
             .applicationErrorCode(ApplicationErrorCode.NOT_FOUND_BUSINESS_REQUEST_ANSWER)
             .build();
   }
-  public static BusinessException NOT_COMMON_CODE(){
-    return BusinessException.builder()
-            .applicationErrorCode(ApplicationErrorCode.NOT_COMMON_CODE)
-            .build();
-  }
   public static BusinessException DOES_NOT_HAVE_PERMISSION(){
     return BusinessException.builder()
             .applicationErrorCode(ApplicationErrorCode.DOES_NOT_HAVE_PERMISSION)
             .build();
   }
-  public static BusinessException DUPLICATE_COMMON_CODE_NAME(){
-    return BusinessException.builder()
-            .applicationErrorCode(ApplicationErrorCode.DUPLICATE_COMMON_CODE_NAME)
-            .build();
-  }
-  public static BusinessException NOT_FOUND_MAN_MONTH_INFO(){
-    return BusinessException.builder()
-            .applicationErrorCode(ApplicationErrorCode.NOT_FOUND_MAN_MONTH_INFO)
-            .build();
-  }
+
   public static BusinessException DOES_NOT_MATCH_PASSWORD(){
     return BusinessException.builder()
             .applicationErrorCode(ApplicationErrorCode.DOES_NOT_MATCH_PASSWORD)

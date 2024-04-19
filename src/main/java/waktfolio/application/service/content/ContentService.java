@@ -1,14 +1,14 @@
 package waktfolio.application.service.content;
 
 import jakarta.servlet.http.HttpServletRequest;
-import waktfolio.rest.dto.content.MainContentResponse;
+import waktfolio.rest.dto.content.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ContentService {
-    MainContentResponse main();
-
-    void upLike(HttpServletRequest request, UUID contentId);
-
-
+    MainContentResponse getMainContent();
+    FindContentGroupResponse getAllContentGroup(List<String> tags);
+    List<FindContentDetail> getAllContent(UUID contentGroupId);
+    LikeResponse upLikeContent(HttpServletRequest request, UUID contentId);
 }

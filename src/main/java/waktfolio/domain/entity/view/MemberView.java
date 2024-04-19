@@ -14,8 +14,7 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DayView extends BaseEntity {
+public class MemberView extends BaseEntity {
     private UUID contentId;
-    private UUID contentGroupId;
     private Long viewCount;
 }
