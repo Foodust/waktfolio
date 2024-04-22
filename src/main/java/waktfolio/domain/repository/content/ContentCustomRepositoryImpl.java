@@ -5,15 +5,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.QContent;
 import waktfolio.domain.entity.like.QMemberLike;
 import waktfolio.domain.entity.member.QMember;
-import waktfolio.rest.dto.BaseListDto;
 import waktfolio.rest.dto.content.FindContent;
 
 import java.util.List;
@@ -34,7 +31,8 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .select(content.views.sum())
                 .from(content)
                 .where(
-                        isMemberId(memberId)
+                        isMemberId(memberId),
+                        isUseYn()
                 )
                 .fetchOne();
     }
@@ -48,7 +46,8 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
         return queryFactory
                 .selectFrom(content)
                 .where(
-                        isTags
+                        isTags,
+                        isUseYn()
                 )
                 .orderBy(
                         content.createDate.desc()
@@ -69,6 +68,9 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                         ))
                 .from(content)
                 .join(member).on(member.id.eq(content.memberId))
+                .where(
+                        isUseYn()
+                )
                 .orderBy(
                         content.createDate.desc()
                 )
@@ -76,6 +78,9 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .fetch();
     }
 
+    private BooleanExpression isUseYn(){
+        return content.useYn.eq(true);
+    }
     private BooleanExpression isMemberId(UUID memberId) {
         return memberId != null ? content.memberId.eq(memberId) : null;
     }

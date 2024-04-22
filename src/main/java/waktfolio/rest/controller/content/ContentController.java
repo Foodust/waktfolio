@@ -20,6 +20,12 @@ import java.util.UUID;
 public class ContentController {
     private final ContentService contentService;
 
+    @PostMapping("/")
+    public ResponseEntity<ApiResponse> createContent(HttpServletRequest request,@RequestBody CreateContentRequest createContentRequest){
+        contentService.createContent(request, createContentRequest);
+        return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
+    }
+
     @GetMapping("/main")
     @Tag(name = "메인 콘텐츠 가져오기")
     public ResponseEntity<ApiResponse> getMainContent(HttpServletRequest request) {
@@ -33,6 +39,13 @@ public class ContentController {
         LikeResponse isLike = contentService.upLikeContent(request, contentId);
         return new ResponseEntity<>(ApiResponse.of(request,isLike), HttpStatus.OK);
     }
+    @PatchMapping("/{contentId}/view")
+    @Tag(name = "콘텐츠 조회수 증가")
+    public ResponseEntity<ApiResponse> view(HttpServletRequest request, @PathVariable UUID contentId) {
+        contentService.viewContent(contentId);
+        return new ResponseEntity<>(ApiResponse.of(request), HttpStatus.OK);
+    }
+
     @GetMapping("")
     @Tag(name = "그룹 검색하기")
     public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, @RequestParam List<String> tags, Pageable pageable){
@@ -40,16 +53,16 @@ public class ContentController {
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
 
-    @GetMapping("/{contentGroupId}")
+    @GetMapping("/{memberId}")
     @Tag(name = "그룹 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID contentGroupId, List<String> tags) {
-        List<FindContentResponse> allContentGroup = contentService.getContentGroup(contentGroupId, tags);
+    public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID memberId, List<String> tags) {
+        List<FindContentResponse> allContentGroup = contentService.getContentGroup(memberId, tags);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
-    @GetMapping("/{contentGroupId}/{contentId}")
+    @GetMapping("/{memberId}/{contentId}")
     @Tag(name = "콘텐트 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentGroupId, @PathVariable UUID contentId) {
-        FindContentDetailResponse allContent = contentService.getContent(contentGroupId,contentId);
+    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID memberId, @PathVariable UUID contentId) {
+        FindContentDetailResponse allContent = contentService.getContent(memberId,contentId);
         return new ResponseEntity<>(ApiResponse.of(request,allContent), HttpStatus.OK);
     }
 }

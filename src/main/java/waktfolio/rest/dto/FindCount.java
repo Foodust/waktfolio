@@ -1,15 +1,17 @@
-package waktfolio.rest.dto.member;
+package waktfolio.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginMemberResponse {
-    private String accessToken;
-    private String name;
+public class FindCount {
+    private UUID contentId;
+    private Long count;
 }

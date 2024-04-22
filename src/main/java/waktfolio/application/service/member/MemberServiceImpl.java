@@ -29,8 +29,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
         Member member = memberRepository.findByLoginId(loginMemberRequest.getLoginId()).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
-        if(!passwordEncoder.matches(member.getPassword(),loginMemberRequest.getPassword())){
-            throw BusinessException.DOES_NOT_MATCH_PASSWORD();
+        if(!passwordEncoder.matches(loginMemberRequest.getPassword(),member.getPassword())){
+            throw BusinessException.NOT_MATCHED_PASSWORD();
         }
         String newToken = jwtTokenUtil.generateToken(member.getId());
         return memberMapper.loginMemberResponseOf(member.getName(),newToken);

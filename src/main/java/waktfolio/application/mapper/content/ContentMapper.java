@@ -6,7 +6,6 @@ import waktfolio.domain.entity.like.MemberLike;
 import waktfolio.domain.entity.member.Member;
 import waktfolio.rest.dto.content.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +15,21 @@ public class ContentMapper {
         return MemberLike.builder()
                 .memberId(memberId)
                 .contentId(contentId)
+                .build();
+    }
+    public Content contentFrom(UUID memberId, CreateContentRequest createContentRequest){
+        return Content.builder()
+                .memberId(memberId)
+                .name(createContentRequest.getName())
+                .description(createContentRequest.getDescription())
+                .tag(createContentRequest.getTag())
+                .backGroundColorCode(createContentRequest.getBackGroundColorCode())
+                .backGroundPath(createContentRequest.getBackGroundPath())
+                .thumbnailImagePath(createContentRequest.getThumbnailImagePath())
+                .cafeLink(createContentRequest.getCafeLink())
+                .youtubeLink(createContentRequest.getYoutubeLink())
+                .objectPath(createContentRequest.getObjectPath())
+                .useYn(false)
                 .build();
     }
 
@@ -55,20 +69,12 @@ public class ContentMapper {
                 .build();
     }
 
-    public FindMainContentResponse findMainContentResponseOf(List<FindContent> createDate, List<FindContent> like, List<FindContent> view) {
+    public FindMainContentResponse findMainContentResponseOf(List<FindContent> main, List<FindContent> createDate, List<FindContent> like, List<FindContent> view) {
         return FindMainContentResponse.builder()
-                .mainMember(findContentsOf(createDate.get(0), like.get(0), view.get(0)))
+                .mainMember(main)
                 .newMember(createDate)
                 .likeMember(like)
                 .viewMember(view)
                 .build();
-    }
-
-    private List<FindContent> findContentsOf(FindContent create, FindContent like, FindContent view) {
-        List<FindContent> contents = new ArrayList<>();
-        contents.add(create);
-        contents.add(like);
-        contents.add(view);
-        return contents;
     }
 }

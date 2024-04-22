@@ -47,7 +47,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 log.warn("Token 이 존재하지 않습니다.");
             }
             if (memberId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (tokenUtil.validateToken(token, memberId)) {
+                if (!tokenUtil.validateToken(token, memberId)) {
                     throw new Exception();
                 }
             }

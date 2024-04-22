@@ -21,6 +21,7 @@ public class MemberMapper {
         return Member.builder()
                 .loginId(registerMemberRequest.getLoginId())
                 .password(encodePassword)
+                .name(registerMemberRequest.getName())
                 .profileImagePath(registerMemberRequest.getProfileImagePath())
                 .build();
     }

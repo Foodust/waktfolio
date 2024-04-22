@@ -38,6 +38,13 @@ public class ContentServiceImpl implements ContentService {
     private final MemberLikeRepository memberLikeRepository;
 
     @Override
+    public void createContent(HttpServletRequest request,CreateContentRequest createContentRequest) {
+        UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
+        Content content = contentMapper.contentFrom(memberId,createContentRequest);
+        contentRepository.save(content);
+    }
+
+    @Override
     public FindMainContentResponse getMainMember() {
 
         // 최근 등록 순
@@ -46,14 +53,22 @@ public class ContentServiceImpl implements ContentService {
         List<FindContent> orderByLikeCount = dayLikeRepository.findOrderByLikeCount();
         // 조회 순
         List<FindContent> orderByViewCount = dayViewRepository.findOrderByViewCount();
-        return contentMapper.findMainContentResponseOf(createDateContents, orderByLikeCount, orderByViewCount);
+
+        List<FindContent> main = new ArrayList<>();
+        if(!createDateContents.isEmpty())
+            main.add(createDateContents.get(0));
+        if(!orderByLikeCount.isEmpty())
+            main.add(orderByLikeCount.get(0));
+        if(!orderByViewCount.isEmpty())
+            main.add(orderByViewCount.get(0));
+        return contentMapper.findMainContentResponseOf(main, createDateContents, orderByLikeCount, orderByViewCount);
     }
 
     @Override
     public List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable) {
         List<Content> contents = contentRepository.findByTagLikeIn(tags, pageable);
-        Set<UUID> contentIds = contents.stream().map(Content::getMemberId).collect(Collectors.toSet());
-        List<Member> allGroups = memberRepository.findAllById(contentIds);
+        Set<UUID> memberId = contents.stream().map(Content::getMemberId).collect(Collectors.toSet());
+        List<Member> allGroups = memberRepository.findAllById(memberId);
         List<FindMemberResponse> findMemberResponse = new ArrayList<>();
         allGroups.forEach(member -> {
             Long totalLike = memberLikeRepository.countByMemberId(member.getId());
@@ -65,7 +80,7 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tags) {
-        List<Content> contents = contentRepository.findByMemberIdAndTagInOrderByTagAscCreateDateDesc(contentGroupId, tags);
+        List<Content> contents = contentRepository.findByMemberIdAndTagInAndUseYnOrderByTagAscCreateDateDesc(contentGroupId, tags,true);
         List<FindContentResponse> findContentResponses = new ArrayList<>();
         contents.forEach(content -> {
             Long likes = memberLikeRepository.countByContentId(content.getId());
@@ -76,10 +91,15 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public FindContentDetailResponse getContent(UUID contentGroupId, UUID contentId) {
-        Content content = contentRepository.findByMemberIdAndId(contentGroupId, contentId).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
-        content.setViews(content.getViews() + 1);
+        Content content = contentRepository.findByMemberIdAndIdAndUseYn(contentGroupId, contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         Long likes = memberLikeRepository.countByContentId(contentId);
         return contentMapper.findContentDetailResponseOf(content, likes);
+    }
+
+    @Override
+    public void viewContent(UUID contentId) {
+        Content content = contentRepository.findByIdAndUseYn(contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        content.setViews(content.getViews() + 1);
     }
 
     @Override
