@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import waktfolio.application.service.content.ContentService;
 import waktfolio.rest.ApiResponse;
-import waktfolio.rest.dto.BaseListDto;
 import waktfolio.rest.dto.content.*;
 
 import java.util.List;
@@ -35,16 +34,22 @@ public class ContentController {
         return new ResponseEntity<>(ApiResponse.of(request,isLike), HttpStatus.OK);
     }
     @GetMapping("")
-    @Tag(name = "콘텐츠 검색하기")
-    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request,@RequestParam List<String> tags){
-        List<FindContentGroupResponse> allContentGroup = contentService.getAllContentGroup(tags);
+    @Tag(name = "그룹 검색하기")
+    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, @RequestParam List<String> tags, Pageable pageable){
+        List<FindMemberResponse> allContentGroup = contentService.findAllContentGroup(tags,pageable);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
 
     @GetMapping("/{contentGroupId}")
-    @Tag(name = "콘텐츠 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentGroupId, List<String> tags) {
-        List<FindContentDetail> allContent = contentService.getAllContent(contentGroupId, tags);
+    @Tag(name = "그룹 상세조회 하기")
+    public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID contentGroupId, List<String> tags) {
+        List<FindContentResponse> allContentGroup = contentService.getContentGroup(contentGroupId, tags);
+        return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
+    }
+    @GetMapping("/{contentGroupId}/{contentId}")
+    @Tag(name = "콘텐트 상세조회 하기")
+    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentGroupId, @PathVariable UUID contentId) {
+        FindContentDetailResponse allContent = contentService.getContent(contentGroupId,contentId);
         return new ResponseEntity<>(ApiResponse.of(request,allContent), HttpStatus.OK);
     }
 }

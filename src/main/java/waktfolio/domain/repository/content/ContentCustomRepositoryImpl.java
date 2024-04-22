@@ -23,17 +23,6 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final QContent content = QContent.content;
 
     @Override
-    public Long sumLikeByMemberId(UUID memberId) {
-        return queryFactory
-                .select(content.likes.sum())
-                .from(content)
-                .where(
-                        isMemberId(memberId)
-                )
-                .fetchOne();
-    }
-
-    @Override
     public Long sumViewByMemberId(UUID memberId) {
         return queryFactory
                 .select(content.views.sum())
@@ -45,7 +34,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     }
 
     @Override
-    public List<Content> findByTagLikeIn(List<String> tags) {
+    public List<Content> findByTagLikeIn(List<String> tags,Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
         for (String tag : tags) {
             isTags.or(content.tag.containsIgnoreCase(tag));
@@ -58,6 +47,8 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .orderBy(
                         content.createDate.desc()
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 

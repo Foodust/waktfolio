@@ -1,6 +1,9 @@
 package waktfolio.rest.dto.content;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -8,17 +11,11 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindContentDetail {
+public class FindContentResponse {
     private UUID contentId;
     private String name;
-    private String objectPath;
     private String description;
     private String thumbnailImagePath;
-    private String backGroundPath;
-    private String backGroundColorCode;
     private Long likes;
     private Long views;
-    private String tag;
-    private String youtubeLink;
-    private String cafeLink;
 }

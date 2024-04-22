@@ -10,8 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MainContentResponse {
-    List<FindContentGroup> mainContentGroups;
-    List<FindContentGroup> newContentGroups;
-    List<FindContentGroup> likeContentGroups;
-    List<FindContentGroup> viewContentGroups;
+    List<FindMember> mainMember;
+    List<FindMember> newMember;
+    List<FindMember> likeMember;
+    List<FindMember> viewMember;
 }

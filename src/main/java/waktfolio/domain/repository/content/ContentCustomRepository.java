@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContentCustomRepository {
-    Long sumLikeByMemberId(UUID memberId);
     Long sumViewByMemberId(UUID memberId);
-    List<Content> findByTagLikeIn(List<String> tags);
+    List<Content> findByTagLikeIn(List<String> tags,Pageable pageable);
 }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import waktfolio.application.mapper.member.MemberMapper;
 import waktfolio.domain.entity.member.Member;
 import waktfolio.domain.repository.content.ContentRepository;
+import waktfolio.domain.repository.like.MemberLikeRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
@@ -22,6 +23,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final ContentRepository contentRepository;
+    private final MemberLikeRepository memberLikeRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     @Override
@@ -53,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberProfileResponse profile(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
-        Long totalLike = contentRepository.sumLikeByMemberId(memberId);
+        Long totalLike = memberLikeRepository.countByMemberId(memberId);
         Long totalView = contentRepository.sumViewByMemberId(memberId);
         return memberMapper.memberProfileResponseOf(member,totalLike,totalView);
     }
