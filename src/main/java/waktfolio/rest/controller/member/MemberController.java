@@ -21,7 +21,7 @@ public class MemberController {
         LoginMemberResponse login = memberService.login(loginMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request,login),HttpStatus.OK);
     }
-    @PostMapping("")
+    @PostMapping("/register")
     @Tag(name = "회원가입")
     public ResponseEntity<ApiResponse> registerMember(HttpServletRequest request, @RequestBody RegisterMemberRequest registerMemberRequest){
         memberService.register(registerMemberRequest);
