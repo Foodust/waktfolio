@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ContentService {
-    MainContentResponse getMainContent();
+    FindMainContentResponse getMainMember();
     List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable);
     List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tag);
     FindContentDetailResponse getContent(UUID contentGroupId, UUID contentId);

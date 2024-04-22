@@ -1,6 +1,7 @@
 package waktfolio.domain.repository.content;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.QContent;
+import waktfolio.domain.entity.like.QMemberLike;
+import waktfolio.domain.entity.member.QMember;
 import waktfolio.rest.dto.BaseListDto;
+import waktfolio.rest.dto.content.FindContent;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +25,8 @@ import java.util.UUID;
 public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final JPAQueryFactory queryFactory;
     private final QContent content = QContent.content;
+    private final QMember member = QMember.member;
+    private final QMemberLike memberLike = QMemberLike.memberLike;
 
     @Override
     public Long sumViewByMemberId(UUID memberId) {
@@ -34,7 +40,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     }
 
     @Override
-    public List<Content> findByTagLikeIn(List<String> tags,Pageable pageable) {
+    public List<Content> findByTagLikeIn(List<String> tags, Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
         for (String tag : tags) {
             isTags.or(content.tag.containsIgnoreCase(tag));
@@ -52,11 +58,25 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .fetch();
     }
 
-    private BooleanExpression isMemberId(UUID memberId) {
-        return memberId != null ? content.memberId.eq(memberId) : null;
+    @Override
+    public List<FindContent> findOrderByCreateDate() {
+        return queryFactory
+                .select(Projections.bean(FindContent.class,
+                        content.id.as("contentId"),
+                        member.name,
+                        content.name,
+                        content.thumbnailImagePath
+                        ))
+                .from(content)
+                .join(member).on(member.id.eq(content.memberId))
+                .orderBy(
+                        content.createDate.desc()
+                )
+                .limit(5)
+                .fetch();
     }
 
-    private BooleanExpression isContentGroupId(UUID contentGroupId) {
-        return contentGroupId != null ? content.contentGroupId.eq(contentGroupId) : null;
+    private BooleanExpression isMemberId(UUID memberId) {
+        return memberId != null ? content.memberId.eq(memberId) : null;
     }
 }

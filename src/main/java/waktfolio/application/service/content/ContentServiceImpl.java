@@ -38,20 +38,27 @@ public class ContentServiceImpl implements ContentService {
     private final MemberLikeRepository memberLikeRepository;
 
     @Override
-    public MainContentResponse getMainContent() {
-        return null;
+    public FindMainContentResponse getMainMember() {
+
+        // 최근 등록 순
+        List<FindContent> createDateContents = contentRepository.findOrderByCreateDate();
+        // 좋아요 순
+        List<FindContent> orderByLikeCount = dayLikeRepository.findOrderByLikeCount();
+        // 조회 순
+        List<FindContent> orderByViewCount = dayViewRepository.findOrderByViewCount();
+        return contentMapper.findMainContentResponseOf(createDateContents, orderByLikeCount, orderByViewCount);
     }
 
     @Override
     public List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable) {
-        List<Content> contents = contentRepository.findByTagLikeIn(tags,pageable);
+        List<Content> contents = contentRepository.findByTagLikeIn(tags, pageable);
         Set<UUID> contentIds = contents.stream().map(Content::getMemberId).collect(Collectors.toSet());
         List<Member> allGroups = memberRepository.findAllById(contentIds);
         List<FindMemberResponse> findMemberResponse = new ArrayList<>();
-        allGroups.forEach(member->{
+        allGroups.forEach(member -> {
             Long totalLike = memberLikeRepository.countByMemberId(member.getId());
             Long totalView = contentRepository.sumViewByMemberId(member.getId());
-            findMemberResponse.add(contentMapper.findMemberResponseOf(member,totalLike,totalView));
+            findMemberResponse.add(contentMapper.findMemberResponseOf(member, totalLike, totalView));
         });
         return findMemberResponse;
     }
@@ -60,9 +67,9 @@ public class ContentServiceImpl implements ContentService {
     public List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tags) {
         List<Content> contents = contentRepository.findByMemberIdAndTagInOrderByTagAscCreateDateDesc(contentGroupId, tags);
         List<FindContentResponse> findContentResponses = new ArrayList<>();
-        contents.forEach(content->{
+        contents.forEach(content -> {
             Long likes = memberLikeRepository.countByContentId(content.getId());
-            findContentResponses.add(contentMapper.findContentResponseOf(content,likes));
+            findContentResponses.add(contentMapper.findContentResponseOf(content, likes));
         });
         return findContentResponses;
     }
@@ -70,8 +77,9 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public FindContentDetailResponse getContent(UUID contentGroupId, UUID contentId) {
         Content content = contentRepository.findByMemberIdAndId(contentGroupId, contentId).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        content.setViews(content.getViews() + 1);
         Long likes = memberLikeRepository.countByContentId(contentId);
-        return contentMapper.findContentDetailResponseOf(content,likes);
+        return contentMapper.findContentDetailResponseOf(content, likes);
     }
 
     @Override

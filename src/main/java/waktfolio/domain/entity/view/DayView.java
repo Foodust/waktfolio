@@ -16,6 +16,5 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DayView extends BaseEntity {
     private UUID contentId;
-    private UUID memberId;
     private Long viewCount;
 }

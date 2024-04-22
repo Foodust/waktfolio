@@ -9,9 +9,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MainContentResponse {
-    List<FindMember> mainMember;
-    List<FindMember> newMember;
-    List<FindMember> likeMember;
-    List<FindMember> viewMember;
+public class FindMainContentResponse {
+    List<FindContent> mainMember;
+    List<FindContent> newMember;
+    List<FindContent> likeMember;
+    List<FindContent> viewMember;
 }

@@ -5,5 +5,5 @@ import waktfolio.domain.entity.like.DayLike;
 
 import java.util.UUID;
 
-public interface DayLikeRepository extends JpaRepository<DayLike, UUID> {
+public interface DayLikeRepository extends JpaRepository<DayLike, UUID>,DayLikeCustomRepository {
 }

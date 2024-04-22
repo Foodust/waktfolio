@@ -23,7 +23,7 @@ public class ContentController {
     @GetMapping("/main")
     @Tag(name = "메인 콘텐츠 가져오기")
     public ResponseEntity<ApiResponse> getMainContent(HttpServletRequest request) {
-        MainContentResponse main = contentService.getMainContent();
+        FindMainContentResponse main = contentService.getMainMember();
         return new ResponseEntity<>(ApiResponse.of(request, main), HttpStatus.OK);
     }
 
