@@ -18,7 +18,7 @@ public class FindContentDetailResponse {
     private String backGroundColorCode;
     private Long likes;
     private Long views;
-    private String tag;
+    private String tagName;
     private String youtubeLink;
     private String cafeLink;
 }

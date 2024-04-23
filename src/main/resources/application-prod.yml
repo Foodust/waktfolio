@@ -11,5 +11,15 @@ spring:
 jwt:
   secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
   validity : 360000
+cloud:
+  aws:
+    url: "http://waktfolio-storage:8000"
+    s3:
+      bucket: waktfolio
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: accessKey1
+      secretKey: verySecretKey1
 server:
   port: 8080

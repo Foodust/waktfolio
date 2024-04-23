@@ -23,9 +23,7 @@ public class Content extends BaseEntity {
     private String objectPath;
     private String backGroundPath;
     private String backGroundColorCode;
-    @Setter
-    private Long views;
-    private String tag;
+    private String tagName;
     private String youtubeLink;
     private String cafeLink;
     private Boolean useYn;

@@ -15,6 +15,7 @@ import waktfolio.domain.entity.member.QMember;
 import waktfolio.domain.entity.view.QDayView;
 import waktfolio.rest.dto.FindCount;
 import waktfolio.rest.dto.content.FindContent;
+import waktfolio.rest.dto.log.Count;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +46,19 @@ public class DayViewCustomRepositoryImpl implements DayViewCustomRepository {
                 .join(member).on(member.id.eq(content.memberId))
                 .fetch();
     }
+
+    @Override
+    public List<Count> countAllView() {
+        return queryFactory
+                .select(Projections.constructor(Count.class,
+                        dayView.contentId,
+                        dayView.count()
+                ))
+                .from(dayView)
+                .groupBy(dayView.contentId)
+                .fetch();
+    }
+
     private BooleanExpression isUseYn(){
         return content.useYn.eq(true);
     }

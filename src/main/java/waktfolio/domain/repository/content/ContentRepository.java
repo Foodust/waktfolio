@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ContentRepository extends JpaRepository<Content, UUID>, ContentCustomRepository {
-    List<Content> findByMemberIdAndTagInAndUseYnOrderByTagAscCreateDateDesc(UUID memberId, List<String> tag,Boolean useYn);
+    List<Content> findByMemberIdAndTagNameInAndUseYnOrderByTagNameAscCreateDateDesc(UUID memberId, List<String> tagNames, Boolean useYn);
     Optional<Content> findByMemberIdAndIdAndUseYn(UUID memberId, UUID id,Boolean useYn);
     Optional<Content> findByIdAndUseYn(UUID memberId, Boolean useYn);
 }

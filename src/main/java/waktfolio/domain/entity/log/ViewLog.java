@@ -1,5 +1,4 @@
-package waktfolio.domain.entity.like;
-
+package waktfolio.domain.entity.log;
 
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
@@ -10,12 +9,12 @@ import waktfolio.domain.BaseEntity;
 
 import java.util.UUID;
 
-@Entity
 @Getter
 @SuperBuilder
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class DayLike extends BaseEntity {
+public class ViewLog extends BaseEntity {
     private UUID contentId;
-    private UUID memberId;
+    private Long viewCount;
 }

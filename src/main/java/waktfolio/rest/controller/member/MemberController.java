@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import waktfolio.application.service.member.MemberService;
@@ -21,15 +22,15 @@ public class MemberController {
         LoginMemberResponse login = memberService.login(loginMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request,login),HttpStatus.OK);
     }
-    @PostMapping("/register")
+    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Tag(name = "회원가입")
-    public ResponseEntity<ApiResponse> registerMember(HttpServletRequest request, @RequestBody RegisterMemberRequest registerMemberRequest){
+    public ResponseEntity<ApiResponse> registerMember(HttpServletRequest request, @ModelAttribute RegisterMemberRequest registerMemberRequest){
         memberService.register(registerMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
     @PatchMapping("")
     @Tag(name = "계정 정보 업데이트")
-    public ResponseEntity<ApiResponse> updateMember(HttpServletRequest request, @RequestBody UpdateMemberRequest updateMemberRequest){
+    public ResponseEntity<ApiResponse> updateMember(HttpServletRequest request, @ModelAttribute UpdateMemberRequest updateMemberRequest){
         memberService.update(request, updateMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }

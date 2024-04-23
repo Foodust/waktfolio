@@ -22,19 +22,17 @@ public class MemberMapper {
                 .loginId(registerMemberRequest.getLoginId())
                 .password(encodePassword)
                 .name(registerMemberRequest.getName())
-                .profileImagePath(registerMemberRequest.getProfileImagePath())
                 .build();
     }
     public MemberProfileResponse memberProfileResponseOf(Member member , Long totalLike , Long totalView){
         return MemberProfileResponse.builder()
                 .name(member.getName())
+                .profileImagePath(member.getProfileImagePath())
                 .totalLike(totalLike)
                 .totalView(totalView)
                 .build();
     }
     public void memberUpdateFrom(Member member, UpdateMemberRequest updateMemberRequest){
         Optional.ofNullable(updateMemberRequest.getName()).ifPresent(member::setName);
-        Optional.ofNullable(updateMemberRequest.getTags()).ifPresent(member::setTags);
-        Optional.ofNullable(updateMemberRequest.getProfileImagePath()).ifPresent(member::setProfileImagePath);
     }
 }

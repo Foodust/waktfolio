@@ -15,13 +15,14 @@ import waktfolio.domain.entity.like.QDayLike;
 import waktfolio.domain.entity.member.QMember;
 import waktfolio.rest.dto.FindCount;
 import waktfolio.rest.dto.content.FindContent;
+import waktfolio.rest.dto.log.Count;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class DayLikeCustomRepositoryImpl implements DayLikeCustomRepository{
+public class DayLikeCustomRepositoryImpl implements DayLikeCustomRepository {
     private final JPAQueryFactory queryFactory;
     private final QDayLike dayLike = QDayLike.dayLike;
     private final QContent content = QContent.content;
@@ -46,6 +47,19 @@ public class DayLikeCustomRepositoryImpl implements DayLikeCustomRepository{
                 .join(member).on(member.id.eq(content.memberId))
                 .fetch();
     }
+
+    @Override
+    public List<Count> countAllLike() {
+        return queryFactory
+                .select(Projections.constructor(Count.class,
+                        dayLike.contentId,
+                        dayLike.count()
+                        ))
+                .from(dayLike)
+                .groupBy(dayLike.contentId)
+                .fetch();
+    }
+
     private BooleanExpression isUseYn(){
         return content.useYn.eq(true);
     }

@@ -1,21 +1,22 @@
-package waktfolio.domain.entity.like;
-
+package waktfolio.domain.entity.view;
 
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import waktfolio.domain.BaseEntity;
 
 import java.util.UUID;
 
-@Entity
 @Getter
+@Entity
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DayLike extends BaseEntity {
+public class ContentView extends BaseEntity {
     private UUID contentId;
-    private UUID memberId;
+    @Setter
+    private Long viewCount;
 }

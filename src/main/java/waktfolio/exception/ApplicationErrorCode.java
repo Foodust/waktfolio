@@ -12,9 +12,9 @@ public enum ApplicationErrorCode {
 
   NOT_FOUND_MEMBER(400, "존재 하지 않는 멤버 입니다."),
   NOT_FOUND_CONTENT(400, "존재 하지 않는 콘텐츠 입니다"),
-  NOT_FOUND_BUSINESS_REQUEST(400, "존재 하지 않는 업무 요청 입니다."),
+  ALREADY_EXITS_TAG_NAME(400, "이미 존재하는 태그입니다."),
   NOT_FOUND_BUSINESS_REQUEST_ANSWER(400, "존재 하지 않는 업무 요청 답변 입니다."),
-  NOT_FOUND_PERSONAL(400, "존재 하지 않는 멤버 설정 입니다."),
+  NOT_FOUND_TAG(400, "태그를 찾을 수 없습니다."),
   NOT_FOUND_MAN_MONTH_INFO(400, "존재 하지 않는 멤버 공수 입니다."),
   NOT_MATCHED_PASSWORD(400, "비밀 번호가 일치 하지 않습니다."),
   ALREADY_EXIST_USER_ID(400, "이미 존재 하는 아이디 입니다."),

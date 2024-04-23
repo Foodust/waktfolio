@@ -22,13 +22,10 @@ public class ContentMapper {
                 .memberId(memberId)
                 .name(createContentRequest.getName())
                 .description(createContentRequest.getDescription())
-                .tag(createContentRequest.getTag())
+                .tagName(createContentRequest.getTagName())
                 .backGroundColorCode(createContentRequest.getBackGroundColorCode())
-                .backGroundPath(createContentRequest.getBackGroundPath())
-                .thumbnailImagePath(createContentRequest.getThumbnailImagePath())
                 .cafeLink(createContentRequest.getCafeLink())
                 .youtubeLink(createContentRequest.getYoutubeLink())
-                .objectPath(createContentRequest.getObjectPath())
                 .useYn(false)
                 .build();
     }
@@ -38,8 +35,7 @@ public class ContentMapper {
                 .name(content.getName())
                 .description(content.getDescription())
                 .likes(likes)
-                .views(content.getViews())
-                .tag(content.getTag())
+                .tagName(content.getTagName())
                 .backGroundColorCode(content.getBackGroundColorCode())
                 .backGroundPath(content.getBackGroundPath())
                 .cafeLink(content.getCafeLink())
@@ -62,7 +58,6 @@ public class ContentMapper {
     public FindContentResponse findContentResponseOf(Content content, Long likes) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
-                .views(content.getViews())
                 .likes(likes)
                 .description(content.getDescription())
                 .thumbnailImagePath(content.getThumbnailImagePath())

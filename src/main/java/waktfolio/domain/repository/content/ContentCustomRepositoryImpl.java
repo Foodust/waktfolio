@@ -11,6 +11,7 @@ import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.QContent;
 import waktfolio.domain.entity.like.QMemberLike;
 import waktfolio.domain.entity.member.QMember;
+import waktfolio.domain.entity.view.QContentView;
 import waktfolio.rest.dto.content.FindContent;
 
 import java.util.List;
@@ -24,12 +25,14 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final QContent content = QContent.content;
     private final QMember member = QMember.member;
     private final QMemberLike memberLike = QMemberLike.memberLike;
+    private final QContentView contentView = QContentView.contentView;
 
     @Override
     public Long sumViewByMemberId(UUID memberId) {
         return queryFactory
-                .select(content.views.sum())
-                .from(content)
+                .select(contentView.viewCount.sum())
+                .from(contentView)
+                .join(content).on(content.id.eq(contentView.contentId))
                 .where(
                         isMemberId(memberId),
                         isUseYn()
@@ -41,7 +44,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     public List<Content> findByTagLikeIn(List<String> tags, Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
         for (String tag : tags) {
-            isTags.or(content.tag.containsIgnoreCase(tag));
+            isTags.or(content.tagName.containsIgnoreCase(tag));
         }
         return queryFactory
                 .selectFrom(content)

@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import waktfolio.application.service.content.ContentService;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class ContentController {
     private final ContentService contentService;
 
-    @PostMapping("/")
+    @PostMapping(value = "/" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> createContent(HttpServletRequest request,@RequestBody CreateContentRequest createContentRequest){
         contentService.createContent(request, createContentRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);

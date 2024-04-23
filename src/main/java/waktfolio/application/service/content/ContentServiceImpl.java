@@ -7,17 +7,27 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import waktfolio.application.mapper.content.ContentMapper;
+import waktfolio.application.mapper.count.CountMapper;
 import waktfolio.domain.entity.content.Content;
+import waktfolio.domain.entity.like.DayLike;
 import waktfolio.domain.entity.like.MemberLike;
+import waktfolio.domain.entity.log.LikeLog;
+import waktfolio.domain.entity.log.ViewLog;
 import waktfolio.domain.entity.member.Member;
+import waktfolio.domain.entity.view.ContentView;
+import waktfolio.domain.entity.view.DayView;
 import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.like.DayLikeRepository;
 import waktfolio.domain.repository.like.MemberLikeRepository;
+import waktfolio.domain.repository.log.LikeLogRepository;
+import waktfolio.domain.repository.log.ViewLogRepository;
 import waktfolio.domain.repository.member.MemberRepository;
+import waktfolio.domain.repository.view.ContentViewRepository;
 import waktfolio.domain.repository.view.DayViewRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
 import waktfolio.rest.dto.content.*;
+import waktfolio.rest.dto.log.Count;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +40,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ContentServiceImpl implements ContentService {
     private final JwtTokenUtil jwtTokenUtil;
+
     private final ContentMapper contentMapper;
     private final ContentRepository contentRepository;
+    private final ContentViewRepository contentViewRepository;
+
     private final DayLikeRepository dayLikeRepository;
     private final DayViewRepository dayViewRepository;
+
     private final MemberRepository memberRepository;
     private final MemberLikeRepository memberLikeRepository;
 
+    private final CountMapper countMapper;
+    private final LikeLogRepository likeLogRepository;
+    private final ViewLogRepository viewLogRepository;
     @Override
     public void createContent(HttpServletRequest request,CreateContentRequest createContentRequest) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
@@ -80,7 +97,7 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tags) {
-        List<Content> contents = contentRepository.findByMemberIdAndTagInAndUseYnOrderByTagAscCreateDateDesc(contentGroupId, tags,true);
+        List<Content> contents = contentRepository.findByMemberIdAndTagNameInAndUseYnOrderByTagNameAscCreateDateDesc(contentGroupId, tags,true);
         List<FindContentResponse> findContentResponses = new ArrayList<>();
         contents.forEach(content -> {
             Long likes = memberLikeRepository.countByContentId(content.getId());
@@ -98,8 +115,13 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public void viewContent(UUID contentId) {
-        Content content = contentRepository.findByIdAndUseYn(contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
-        content.setViews(content.getViews() + 1);
+        contentRepository.findByIdAndUseYn(contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        DayView dayView = dayViewRepository.findByContentId(contentId).orElse(DayView.builder().contentId(contentId).viewCount(0L).build());
+        ContentView contentView = contentViewRepository.findByContentId(contentId).orElse(ContentView.builder().contentId(contentId).viewCount(0L).build());
+        dayView.setViewCount(dayView.getViewCount() + 1);
+        contentView.setViewCount(contentView.getViewCount() + 1);
+        dayViewRepository.save(dayView);
+        contentViewRepository.save(contentView);
     }
 
     @Override
@@ -123,11 +145,17 @@ public class ContentServiceImpl implements ContentService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayLike() {
-
+        List<Count> counts = dayLikeRepository.countAllLike();
+        List<LikeLog> list = counts.stream().map(countMapper::likeLogFrom).toList();
+        likeLogRepository.saveAll(list);
+        dayLikeRepository.deleteAll();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayView() {
-
+        List<Count> counts = dayViewRepository.countAllView();
+        List<ViewLog> list = counts.stream().map(countMapper::viewLogFrom).toList();
+        viewLogRepository.saveAll(list);
+        dayViewRepository.deleteAll();
     }
 }
