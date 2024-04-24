@@ -13,7 +13,7 @@ jwt:
   validity : 360000
 cloud:
   aws:
-    url: "http://waktfolio-storage:8000"
+    url: "http://43.200.154.182:8000"
     s3:
       bucket: waktfolio
     stack.auto: false
