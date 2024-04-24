@@ -107,7 +107,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         boolean b = file.setReadOnly();
-        return fileName;
+        return file.getPath();
     }
 
     private String uploadFile(String path, MultipartFile file) {
