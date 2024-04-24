@@ -1,10 +1,15 @@
 package waktfolio.application.service.member;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +23,13 @@ import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
 import waktfolio.rest.dto.member.*;
 
+import javax.swing.text.Utilities;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -33,17 +44,18 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     private final AmazonS3Client amazonS3Client;
+    private final String profileImagePrefix = "profileImage/";
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Override
-    public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
+    public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) throws IOException {
         Member member = memberRepository.findByLoginId(loginMemberRequest.getLoginId()).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         if (!passwordEncoder.matches(loginMemberRequest.getPassword(), member.getPassword())) {
             throw BusinessException.NOT_MATCHED_PASSWORD();
         }
         String newToken = jwtTokenUtil.generateToken(member.getId());
-        return memberMapper.loginMemberResponseOf(member.getName(), newToken);
+        return memberMapper.loginMemberResponseOf(member.getName(), newToken, getFile(member.getProfileImagePath()));
     }
 
     @Override
@@ -51,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         if (updateMemberRequest.getProfileImage() != null)
-            member.setProfileImagePath(uploadFile("profileImage/" + member.getId() + "/", updateMemberRequest.getProfileImage()));
+            member.setProfileImagePath(uploadFile(profileImagePrefix + member.getId() + "/", updateMemberRequest.getProfileImage()));
         memberMapper.memberUpdateFrom(member, updateMemberRequest);
     }
 
@@ -62,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
         });
         String encodePassword = passwordEncoder.encode(registerMemberRequest.getPassword());
         Member member = memberMapper.memberFrom(registerMemberRequest, encodePassword);
-        String fileName = uploadFile("profileImage/" + member.getId() + "/", registerMemberRequest.getProfileImage());
+        String fileName = uploadFile(profileImagePrefix + member.getId() + "/", registerMemberRequest.getProfileImage());
         member.setProfileImagePath(fileName);
         memberRepository.save(member);
     }
@@ -74,6 +86,27 @@ public class MemberServiceImpl implements MemberService {
         Long totalLike = memberLikeRepository.countByMemberId(memberId);
         Long totalView = contentRepository.sumViewByMemberId(memberId);
         return memberMapper.memberProfileResponseOf(member, totalLike, totalView);
+    }
+
+    private String getFile(String fileName) throws IOException {
+
+        String folderPath = fileName.substring(0, fileName.lastIndexOf("/") + 1);
+        String fileOnlyName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        String filePath = "/file/" + folderPath;
+        String resultPath = filePath + fileOnlyName;
+        Path path = Paths.get(filePath);
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
+        File file = new File(resultPath);
+        if (!file.exists()) {
+            S3Object object = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
+            try (S3ObjectInputStream objectInputStream = ((S3Object) object).getObjectContent(); FileOutputStream fileStream = new FileOutputStream(file)) {
+                byte[] buffer = IOUtils.toByteArray(objectInputStream);
+                fileStream.write(buffer, 0, buffer.length);
+            }
+        }
+        return file.getPath();
     }
 
     private String uploadFile(String path, MultipartFile file) {

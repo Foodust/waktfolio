@@ -11,10 +11,11 @@ import java.util.Optional;
 
 @Component
 public class MemberMapper {
-    public LoginMemberResponse loginMemberResponseOf(String name, String accessToken){
+    public LoginMemberResponse loginMemberResponseOf(String name, String accessToken,String profileImagePath){
         return LoginMemberResponse.builder()
                 .name(name)
                 .accessToken(accessToken)
+                .profileImagePath(profileImagePath)
                 .build();
     }
     public Member memberFrom(RegisterMemberRequest registerMemberRequest, String encodePassword){

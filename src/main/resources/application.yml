@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://43.200.154.182:55432/waktfolio"
+    url: "jdbc:postgresql://waktfolio.kro.kr:55432/waktfolio"
     username: postgres
     password: "waktfolio!@"
   jpa:
@@ -8,6 +8,10 @@ spring:
       ddl-auto: update
     database: postgresql
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
 jwt:
   secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
   validity : 360000

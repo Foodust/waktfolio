@@ -3,9 +3,11 @@ package waktfolio.application.service.member;
 import jakarta.servlet.http.HttpServletRequest;
 import waktfolio.rest.dto.member.*;
 
+import java.io.IOException;
+
 public interface MemberService {
 
-    LoginMemberResponse login(LoginMemberRequest loginMemberRequest);
+    LoginMemberResponse login(LoginMemberRequest loginMemberRequest) throws IOException;
     void update(HttpServletRequest request,UpdateMemberRequest updateMemberRequest);
     void register(RegisterMemberRequest registerMemberRequest);
     MemberProfileResponse profile(HttpServletRequest request);

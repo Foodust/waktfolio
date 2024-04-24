@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class LoginMemberResponse {
     private String accessToken;
     private String name;
+    private String profileImagePath;
 }
