@@ -89,7 +89,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private String getFile(String fileName) throws IOException {
-
         String folderPath = fileName.substring(0, fileName.lastIndexOf("/") + 1);
         String fileOnlyName = fileName.substring(fileName.lastIndexOf("/") + 1);
         String filePath = "/file/" + folderPath;
@@ -99,6 +98,7 @@ public class MemberServiceImpl implements MemberService {
             Files.createDirectories(path);
         }
         File file = new File(resultPath);
+
         if (!file.exists()) {
             S3Object object = amazonS3Client.getObject(new GetObjectRequest(bucket, fileName));
             try (S3ObjectInputStream objectInputStream = ((S3Object) object).getObjectContent(); FileOutputStream fileStream = new FileOutputStream(file)) {

@@ -8,6 +8,10 @@ spring:
       ddl-auto: update
     database: postgresql
     show-sql: false
+  servlet:
+    multipart:
+      max-file-size: 2GB
+      max-request-size: 2GB
 jwt:
   secret: "asdasd924nt0s89dfbhwalal238yDZ15A35saFdwfaj"
   validity : 360000
