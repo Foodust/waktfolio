@@ -15,6 +15,7 @@ import waktfolio.domain.entity.view.QContentView;
 import waktfolio.rest.dto.content.FindContent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -28,8 +29,8 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final QContentView contentView = QContentView.contentView;
 
     @Override
-    public Long sumViewByMemberId(UUID memberId) {
-        return queryFactory
+    public Optional<Long> sumViewByMemberId(UUID memberId) {
+        return Optional.ofNullable(queryFactory
                 .select(contentView.viewCount.sum())
                 .from(contentView)
                 .join(content).on(content.id.eq(contentView.contentId))
@@ -37,7 +38,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                         isMemberId(memberId),
                         isUseYn()
                 )
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                         member.name,
                         content.name,
                         content.thumbnailImagePath
-                        ))
+                ))
                 .from(content)
                 .join(member).on(member.id.eq(content.memberId))
                 .where(
@@ -81,9 +82,22 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .fetch();
     }
 
-    private BooleanExpression isUseYn(){
+    @Override
+    public List<Content> findByUseYn(Boolean useYn,Pageable pageable) {
+        return queryFactory
+                .selectFrom(content)
+                .where(
+                        content.useYn.eq(false)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private BooleanExpression isUseYn() {
         return content.useYn.eq(true);
     }
+
     private BooleanExpression isMemberId(UUID memberId) {
         return memberId != null ? content.memberId.eq(memberId) : null;
     }

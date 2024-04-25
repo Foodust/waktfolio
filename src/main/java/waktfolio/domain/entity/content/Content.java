@@ -10,6 +10,7 @@ import waktfolio.domain.BaseEntity;
 
 import java.util.UUID;
 
+@Setter
 @Entity
 @Getter
 @SuperBuilder

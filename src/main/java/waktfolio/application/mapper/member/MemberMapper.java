@@ -2,6 +2,7 @@ package waktfolio.application.mapper.member;
 
 import org.springframework.stereotype.Component;
 import waktfolio.domain.entity.member.Member;
+import waktfolio.domain.entity.member.MemberPermission;
 import waktfolio.rest.dto.member.LoginMemberResponse;
 import waktfolio.rest.dto.member.MemberProfileResponse;
 import waktfolio.rest.dto.member.RegisterMemberRequest;
@@ -23,6 +24,7 @@ public class MemberMapper {
                 .loginId(registerMemberRequest.getLoginId())
                 .password(encodePassword)
                 .name(registerMemberRequest.getName())
+                .memberPermission(MemberPermission.MEMBER)
                 .build();
     }
     public MemberProfileResponse memberProfileResponseOf(Member member , Long totalLike , Long totalView){

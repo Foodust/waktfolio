@@ -6,10 +6,11 @@ import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-@Builder
+import java.io.Serializable;
+
 @Getter
 @AllArgsConstructor
-public class UpdateMemberRequest {
+public class UpdateMemberRequest implements Serializable {
     @Length(min = 4, max = 12)
     private String loginId;
     @Length(min = 4, max = 15)

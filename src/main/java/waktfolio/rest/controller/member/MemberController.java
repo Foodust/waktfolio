@@ -30,7 +30,7 @@ public class MemberController {
         memberService.register(registerMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
-    @PatchMapping("")
+    @PatchMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Tag(name = "계정 정보 업데이트")
     public ResponseEntity<ApiResponse> updateMember(HttpServletRequest request, @ModelAttribute UpdateMemberRequest updateMemberRequest){
         memberService.update(request, updateMemberRequest);
@@ -41,5 +41,11 @@ public class MemberController {
     public ResponseEntity<ApiResponse> getProfile(HttpServletRequest request){
         MemberProfileResponse profile = memberService.profile(request);
         return new ResponseEntity<>(ApiResponse.of(request, profile),HttpStatus.OK);
+    }
+    @DeleteMapping("")
+    @Tag(name = "탈퇴")
+    public ResponseEntity<ApiResponse> deleteMember(HttpServletRequest request){
+        memberService.delete(request);
+        return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
 }

@@ -9,6 +9,7 @@ public interface MemberService {
 
     LoginMemberResponse login(LoginMemberRequest loginMemberRequest);
     void update(HttpServletRequest request,UpdateMemberRequest updateMemberRequest);
+    void delete(HttpServletRequest request);
     void register(RegisterMemberRequest registerMemberRequest);
     MemberProfileResponse profile(HttpServletRequest request);
 }

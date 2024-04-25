@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import waktfolio.exception.ApplicationErrorCode;
 import waktfolio.exception.ErrorResponse;
@@ -22,7 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
     private final JwtTokenUtil tokenUtil;
-
+    private final SecurityMemberService securityMemberService;
     public void setErrorResponse(HttpServletResponse response, HttpServletRequest request, ApplicationErrorCode ex) {
         try {
             response.setStatus(ex.getStatus());
@@ -47,8 +50,14 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 log.warn("Token 이 존재하지 않습니다.");
             }
             if (memberId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (!tokenUtil.validateToken(token, memberId)) {
-                    throw new Exception();
+                UserDetails userDetails = securityMemberService.loadUserByUsername(memberId);
+                if (tokenUtil.validateToken(token, memberId)) {
+                    Authentication auth = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
             filterChain.doFilter(request, response);

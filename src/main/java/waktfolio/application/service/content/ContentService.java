@@ -9,10 +9,11 @@ import java.util.UUID;
 
 public interface ContentService {
     void createContent(HttpServletRequest request,CreateContentRequest createContentRequest);
+    void updateContent(HttpServletRequest request,UpdateContentRequest updateContentRequest);
     FindMainContentResponse getMainMember();
     List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable);
-    List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tag);
-    FindContentDetailResponse getContent(UUID contentGroupId, UUID contentId);
+    List<FindContentResponse> getContentGroup(UUID memberId, List<String> tag);
+    FindContentDetailResponse getContent(UUID memberId, UUID contentId);
     void viewContent(UUID contentId);
     LikeResponse upLikeContent(HttpServletRequest request, UUID contentId);
 }

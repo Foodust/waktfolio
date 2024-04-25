@@ -1,6 +1,8 @@
 package waktfolio.domain.entity.member;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,7 @@ public class Member extends BaseEntity {
     private String name;
     private String profileImagePath;
     private List<String> tags;
+    @Enumerated(value = EnumType.STRING)
+    private MemberPermission memberPermission;
     private Boolean useYn;
-
 }

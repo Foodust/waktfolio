@@ -1,15 +1,18 @@
 package waktfolio.application.service.content;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import waktfolio.application.mapper.content.ContentMapper;
 import waktfolio.application.mapper.count.CountMapper;
 import waktfolio.domain.entity.content.Content;
-import waktfolio.domain.entity.like.DayLike;
 import waktfolio.domain.entity.like.MemberLike;
 import waktfolio.domain.entity.log.LikeLog;
 import waktfolio.domain.entity.log.ViewLog;
@@ -29,10 +32,8 @@ import waktfolio.jwt.JwtTokenUtil;
 import waktfolio.rest.dto.content.*;
 import waktfolio.rest.dto.log.Count;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,10 +55,48 @@ public class ContentServiceImpl implements ContentService {
     private final CountMapper countMapper;
     private final LikeLogRepository likeLogRepository;
     private final ViewLogRepository viewLogRepository;
+
+    private final AmazonS3Client amazonS3Client;
+    private final String objectName = "object";
+    private final String thumbnailImage = "thumbnail";
+    private final String backGround = "backGround";
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     @Override
-    public void createContent(HttpServletRequest request,CreateContentRequest createContentRequest) {
+    public void createContent(HttpServletRequest request, CreateContentRequest createContentRequest) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
-        Content content = contentMapper.contentFrom(memberId,createContentRequest);
+        Content content = contentMapper.contentFrom(memberId, createContentRequest);
+        String objectPath = uploadFile(memberId + "/" + objectName + "/" + createContentRequest.getName(), objectName, createContentRequest.getObject());
+        content.setObjectPath(objectPath);
+        if (createContentRequest.getBackGround() != null) {
+            String backGroundPath = uploadFile(memberId + "/" + backGround + "/" + createContentRequest.getName(), backGround, createContentRequest.getBackGround());
+            content.setBackGroundPath(backGroundPath);
+        }
+        if (createContentRequest.getThumbnailImage() != null) {
+            String thumbnailImagePath = uploadFile(memberId + "/" + thumbnailImage + "/" + createContentRequest.getName(), thumbnailImage, createContentRequest.getThumbnailImage());
+            content.setThumbnailImagePath(thumbnailImagePath);
+        }
+        contentRepository.save(content);
+    }
+
+    @Override
+    public void updateContent(HttpServletRequest request, UpdateContentRequest updateContentRequest) {
+        UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
+        Content content = contentRepository.findById(updateContentRequest.getContentId()).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        contentMapper.updateContent(content,updateContentRequest);
+        if(updateContentRequest.getObject() != null){
+            String objectPath = uploadFile(memberId + "/" + objectName + "/" + updateContentRequest.getName(), objectName, updateContentRequest.getObject());
+            content.setObjectPath(objectPath);
+        }
+        if (updateContentRequest.getBackGround() != null) {
+            String backGroundPath = uploadFile(memberId + "/" + backGround + "/" + updateContentRequest.getName(), backGround, updateContentRequest.getBackGround());
+            content.setBackGroundPath(backGroundPath);
+        }
+        if (updateContentRequest.getThumbnailImage() != null) {
+            String thumbnailImagePath = uploadFile(memberId + "/" + thumbnailImage + "/" + updateContentRequest.getName(), thumbnailImage, updateContentRequest.getThumbnailImage());
+            content.setThumbnailImagePath(thumbnailImagePath);
+        }
         contentRepository.save(content);
     }
 
@@ -72,11 +111,11 @@ public class ContentServiceImpl implements ContentService {
         List<FindContent> orderByViewCount = dayViewRepository.findOrderByViewCount();
 
         List<FindContent> main = new ArrayList<>();
-        if(!createDateContents.isEmpty())
+        if (!createDateContents.isEmpty())
             main.add(createDateContents.get(0));
-        if(!orderByLikeCount.isEmpty())
+        if (!orderByLikeCount.isEmpty())
             main.add(orderByLikeCount.get(0));
-        if(!orderByViewCount.isEmpty())
+        if (!orderByViewCount.isEmpty())
             main.add(orderByViewCount.get(0));
         return contentMapper.findMainContentResponseOf(main, createDateContents, orderByLikeCount, orderByViewCount);
     }
@@ -89,15 +128,16 @@ public class ContentServiceImpl implements ContentService {
         List<FindMemberResponse> findMemberResponse = new ArrayList<>();
         allGroups.forEach(member -> {
             Long totalLike = memberLikeRepository.countByMemberId(member.getId());
-            Long totalView = contentRepository.sumViewByMemberId(member.getId());
+            Long totalView = contentRepository.sumViewByMemberId(member.getId()).orElse(0L);
             findMemberResponse.add(contentMapper.findMemberResponseOf(member, totalLike, totalView));
         });
         return findMemberResponse;
     }
 
+    // 조회수 해야함 나중에 하삼
     @Override
-    public List<FindContentResponse> getContentGroup(UUID contentGroupId, List<String> tags) {
-        List<Content> contents = contentRepository.findByMemberIdAndTagNameInAndUseYnOrderByTagNameAscCreateDateDesc(contentGroupId, tags,true);
+    public List<FindContentResponse> getContentGroup(UUID memberId, List<String> tags) {
+        List<Content> contents = contentRepository.findByMemberIdAndTagNameInAndUseYnOrderByTagNameAscCreateDateDesc(memberId, tags, true);
         List<FindContentResponse> findContentResponses = new ArrayList<>();
         contents.forEach(content -> {
             Long likes = memberLikeRepository.countByContentId(content.getId());
@@ -107,15 +147,15 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public FindContentDetailResponse getContent(UUID contentGroupId, UUID contentId) {
-        Content content = contentRepository.findByMemberIdAndIdAndUseYn(contentGroupId, contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+    public FindContentDetailResponse getContent(UUID memberId, UUID contentId) {
+        Content content = contentRepository.findByMemberIdAndIdAndUseYn(memberId, contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         Long likes = memberLikeRepository.countByContentId(contentId);
         return contentMapper.findContentDetailResponseOf(content, likes);
     }
 
     @Override
     public void viewContent(UUID contentId) {
-        contentRepository.findByIdAndUseYn(contentId,true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         DayView dayView = dayViewRepository.findByContentId(contentId).orElse(DayView.builder().contentId(contentId).viewCount(0L).build());
         ContentView contentView = contentViewRepository.findByContentId(contentId).orElse(ContentView.builder().contentId(contentId).viewCount(0L).build());
         dayView.setViewCount(dayView.getViewCount() + 1);
@@ -142,6 +182,19 @@ public class ContentServiceImpl implements ContentService {
         return likeResponse;
     }
 
+    private String uploadFile(String path, String name, MultipartFile file) {
+        try {
+            String fileName = path + "/" + name + Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.createBucket(bucket);
+            amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayLike() {

@@ -21,12 +21,18 @@ import java.util.UUID;
 public class ContentController {
     private final ContentService contentService;
 
-    @PostMapping(value = "/" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> createContent(HttpServletRequest request,@RequestBody CreateContentRequest createContentRequest){
+    @PostMapping(value = "" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Tag(name = "콘텐츠 생성")
+    public ResponseEntity<ApiResponse> createContent(HttpServletRequest request,@ModelAttribute CreateContentRequest createContentRequest){
         contentService.createContent(request, createContentRequest);
         return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
     }
-
+    @PatchMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Tag(name = "콘텐츠 업데이트")
+    public ResponseEntity<ApiResponse> updateContent(HttpServletRequest request,@ModelAttribute UpdateContentRequest updateContentRequest){
+        contentService.updateContent(request, updateContentRequest);
+        return new ResponseEntity<>(ApiResponse.of(request),HttpStatus.OK);
+    }
     @GetMapping("/main")
     @Tag(name = "메인 콘텐츠 가져오기")
     public ResponseEntity<ApiResponse> getMainContent(HttpServletRequest request) {

@@ -7,6 +7,7 @@ import waktfolio.domain.entity.member.Member;
 import waktfolio.rest.dto.content.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -63,7 +64,13 @@ public class ContentMapper {
                 .thumbnailImagePath(content.getThumbnailImagePath())
                 .build();
     }
-
+    public FindContentResponse findContentResponseOf(Content content) {
+        return FindContentResponse.builder()
+                .contentId(content.getId())
+                .description(content.getDescription())
+                .thumbnailImagePath(content.getThumbnailImagePath())
+                .build();
+    }
     public FindMainContentResponse findMainContentResponseOf(List<FindContent> main, List<FindContent> createDate, List<FindContent> like, List<FindContent> view) {
         return FindMainContentResponse.builder()
                 .mainMember(main)
@@ -71,5 +78,13 @@ public class ContentMapper {
                 .likeMember(like)
                 .viewMember(view)
                 .build();
+    }
+    public void updateContent(Content content, UpdateContentRequest updateContentRequest){
+        Optional.ofNullable(updateContentRequest.getName()).ifPresent(content::setName);
+        Optional.ofNullable(updateContentRequest.getDescription()).ifPresent(content::setDescription);
+        Optional.ofNullable(updateContentRequest.getBackGroundColorCode()).ifPresent(content::setBackGroundColorCode);
+        Optional.ofNullable(updateContentRequest.getCafeLink()).ifPresent(content::setCafeLink);
+        Optional.ofNullable(updateContentRequest.getYoutubeLink()).ifPresent(content::setYoutubeLink);
+        content.setUseYn(false);
     }
 }

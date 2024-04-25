@@ -51,5 +51,10 @@ public class BusinessException extends RuntimeException{
             .applicationErrorCode(ApplicationErrorCode.ALREADY_EXITS_TAG_NAME)
             .build();
   }
+  public static BusinessException ALREADY_EXITS_NAME(){
+    return BusinessException.builder()
+            .applicationErrorCode(ApplicationErrorCode.ALREADY_EXITS_NAME)
+            .build();
+  }
 
 }
