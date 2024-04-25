@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://waktfolio.kro.kr:55432/waktfolio"
+    url: "jdbc:postgresql://3.37.62.124:55432/waktfolio"
     username: postgres
     password: "waktfolio!@"
   jpa:
@@ -17,7 +17,7 @@ jwt:
   validity : 360000
 cloud:
   aws:
-    url: "http://43.200.154.182:8000"
+    url: "http://3.37.62.124:8000"
     s3:
       bucket: waktfolio
     stack.auto: false

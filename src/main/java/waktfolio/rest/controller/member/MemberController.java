@@ -20,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
     @PostMapping("/login")
     @Tag(name = "로그인")
-    public ResponseEntity<ApiResponse> loginMember(HttpServletRequest request, @RequestBody LoginMemberRequest loginMemberRequest) throws IOException {
+    public ResponseEntity<ApiResponse> loginMember(HttpServletRequest request, @RequestBody LoginMemberRequest loginMemberRequest) {
         LoginMemberResponse login = memberService.login(loginMemberRequest);
         return new ResponseEntity<>(ApiResponse.of(request,login),HttpStatus.OK);
     }
