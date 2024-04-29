@@ -12,18 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import waktfolio.application.mapper.content.ContentMapper;
 import waktfolio.application.mapper.count.CountMapper;
+import waktfolio.application.mapper.like.LikeMapper;
+import waktfolio.application.mapper.view.ContentViewMapper;
 import waktfolio.domain.entity.content.Content;
+import waktfolio.domain.entity.like.DayLike;
 import waktfolio.domain.entity.like.MemberLike;
-import waktfolio.domain.entity.log.LikeLog;
-import waktfolio.domain.entity.log.ViewLog;
 import waktfolio.domain.entity.member.Member;
 import waktfolio.domain.entity.view.ContentView;
 import waktfolio.domain.entity.view.DayView;
 import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.like.DayLikeRepository;
 import waktfolio.domain.repository.like.MemberLikeRepository;
-import waktfolio.domain.repository.log.LikeLogRepository;
-import waktfolio.domain.repository.log.ViewLogRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.domain.repository.view.ContentViewRepository;
 import waktfolio.domain.repository.view.DayViewRepository;
@@ -53,8 +52,8 @@ public class ContentServiceImpl implements ContentService {
     private final MemberLikeRepository memberLikeRepository;
 
     private final CountMapper countMapper;
-    private final LikeLogRepository likeLogRepository;
-    private final ViewLogRepository viewLogRepository;
+    private final LikeMapper likeMapper;
+    private final ContentViewMapper contentViewMapper;
 
     private final AmazonS3Client amazonS3Client;
     private final String objectName = "object";
@@ -154,31 +153,32 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public void viewContent(UUID contentId) {
+    public ViewResponse viewContent(UUID contentId) {
         contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         DayView dayView = dayViewRepository.findByContentId(contentId).orElse(DayView.builder().contentId(contentId).viewCount(0L).build());
         ContentView contentView = contentViewRepository.findByContentId(contentId).orElse(ContentView.builder().contentId(contentId).viewCount(0L).build());
         dayView.setViewCount(dayView.getViewCount() + 1);
-        contentView.setViewCount(contentView.getViewCount() + 1);
-        dayViewRepository.save(dayView);
-        contentViewRepository.save(contentView);
+        return countMapper.viewResponseOf(contentView.getViewCount() + dayView.getViewCount());
     }
 
     @Override
     public LikeResponse upLikeContent(HttpServletRequest request, UUID contentId) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         MemberLike memberLike = memberLikeRepository.findByMemberIdAndContentId(memberId, contentId);
+        DayLike dayLike = dayLikeRepository.findByMemberIdAndContentId(memberId, contentId);
         LikeResponse likeResponse = new LikeResponse();
-        if (memberLike != null) {
+        if (memberLike != null && dayLike != null) {
             memberLikeRepository.delete(memberLike);
+            dayLikeRepository.delete(dayLike);
             likeResponse.setIsLike(false);
         } else {
             MemberLike memberLikeOn = contentMapper.memberLikeOf(memberId, contentId);
+            DayLike dayLikeOn = contentMapper.dayLikeOf(memberId, contentId);
             memberLikeRepository.save(memberLikeOn);
+            dayLikeRepository.save(dayLikeOn);
             likeResponse.setIsLike(true);
         }
-        Long byContentId = memberLikeRepository.countByContentId(contentId);
-        likeResponse.setTotalLikeCount(byContentId);
+        likeResponse.setTotalLikeCount(getLike(contentId));
         return likeResponse;
     }
 
@@ -196,19 +196,25 @@ public class ContentServiceImpl implements ContentService {
         }
     }
 
+    private Long getLike(UUID contentId){
+        Long memberLikeCount = memberLikeRepository.countByContentId(contentId);
+        Long dayLikeCount = dayLikeRepository.countByContentId(contentId);
+        return memberLikeCount + dayLikeCount;
+    }
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayLike() {
-        List<Count> counts = dayLikeRepository.countAllLike();
-        List<LikeLog> list = counts.stream().map(countMapper::likeLogFrom).toList();
-        likeLogRepository.saveAll(list);
+        List<DayLike> dayLikes = dayLikeRepository.findAll();
+        memberLikeRepository.saveAll(dayLikes.stream().map(likeMapper::memberLikeFrom).toList());
         dayLikeRepository.deleteAll();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayView() {
         List<Count> counts = dayViewRepository.countAllView();
-        List<ViewLog> list = counts.stream().map(countMapper::viewLogFrom).toList();
-        viewLogRepository.saveAll(list);
+        counts.forEach(count->{
+            ContentView contentView = contentViewRepository.findByContentId(count.getContentId()).orElse(contentViewMapper.contentView(count.getContentId()));
+            contentView.setViewCount(contentView.getViewCount() + count.getCount());
+        });
         dayViewRepository.deleteAll();
     }
 }

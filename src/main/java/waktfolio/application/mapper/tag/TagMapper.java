@@ -1,4 +1,4 @@
-package waktfolio.application.mapper.mapper;
+package waktfolio.application.mapper.tag;
 
 import org.springframework.stereotype.Component;
 import waktfolio.domain.entity.content.Tag;

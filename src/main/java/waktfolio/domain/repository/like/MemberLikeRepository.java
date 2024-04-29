@@ -6,7 +6,7 @@ import waktfolio.domain.entity.like.MemberLike;
 import java.util.List;
 import java.util.UUID;
 
-public interface MemberLikeRepository extends JpaRepository<MemberLike, UUID> {
+public interface MemberLikeRepository extends JpaRepository<MemberLike, UUID>,MemberLikeCustomRepository {
     Long countByContentId(UUID contentId);
     Long countByMemberId(UUID memberId);
     MemberLike findByMemberIdAndContentId(UUID memberId, UUID contentId);

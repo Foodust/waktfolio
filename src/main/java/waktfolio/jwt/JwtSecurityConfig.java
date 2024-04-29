@@ -65,6 +65,7 @@ public class JwtSecurityConfig{
                         ).permitAll()
                         .requestMatchers(
                                 "/api/aws",
+                                "/api/aws/**",
                                 "/api/admin",
                                 "/api/admin/**",
                                 "/api/aws/**"

@@ -2,6 +2,7 @@ package waktfolio.application.mapper.content;
 
 import org.springframework.stereotype.Component;
 import waktfolio.domain.entity.content.Content;
+import waktfolio.domain.entity.like.DayLike;
 import waktfolio.domain.entity.like.MemberLike;
 import waktfolio.domain.entity.member.Member;
 import waktfolio.rest.dto.content.*;
@@ -14,6 +15,12 @@ import java.util.UUID;
 public class ContentMapper {
     public MemberLike memberLikeOf(UUID memberId, UUID contentId) {
         return MemberLike.builder()
+                .memberId(memberId)
+                .contentId(contentId)
+                .build();
+    }
+    public DayLike dayLikeOf(UUID memberId, UUID contentId){
+        return DayLike.builder()
                 .memberId(memberId)
                 .contentId(contentId)
                 .build();

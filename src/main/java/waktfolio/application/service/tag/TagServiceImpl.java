@@ -3,7 +3,7 @@ package waktfolio.application.service.tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import waktfolio.application.mapper.mapper.TagMapper;
+import waktfolio.application.mapper.tag.TagMapper;
 import waktfolio.domain.entity.content.Tag;
 import waktfolio.domain.repository.tag.TagRepository;
 import waktfolio.exception.BusinessException;

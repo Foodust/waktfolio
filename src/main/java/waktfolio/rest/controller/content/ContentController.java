@@ -49,8 +49,8 @@ public class ContentController {
     @PatchMapping("/{contentId}/view")
     @Tag(name = "콘텐츠 조회수 증가")
     public ResponseEntity<ApiResponse> view(HttpServletRequest request, @PathVariable UUID contentId) {
-        contentService.viewContent(contentId);
-        return new ResponseEntity<>(ApiResponse.of(request), HttpStatus.OK);
+        ViewResponse viewResponse = contentService.viewContent(contentId);
+        return new ResponseEntity<>(ApiResponse.of(request,viewResponse), HttpStatus.OK);
     }
 
     @GetMapping("")
