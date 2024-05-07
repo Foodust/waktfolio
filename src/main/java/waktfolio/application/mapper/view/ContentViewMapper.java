@@ -7,10 +7,10 @@ import java.util.UUID;
 
 @Component
 public class ContentViewMapper {
-    public ContentView contentView(UUID contentId){
+    public ContentView contentView(UUID contentId,Long viewCount){
         return ContentView.builder()
                 .contentId(contentId)
-                .viewCount(0L)
+                .viewCount(viewCount)
                 .build();
     }
 }

@@ -21,4 +21,5 @@ public class FindContentDetailResponse {
     private String tagName;
     private String youtubeLink;
     private String cafeLink;
+    private Boolean isLike;
 }

@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         List<Content> contents = contentRepository.findByMemberId(memberId);
-        List<Tag> tags = tagRepository.findByMemberId(memberId);
+        List<Tag> tags = tagRepository.findByMemberIdOrderByName(memberId);
         List<MemberLike> memberLikes = memberLikeRepository.findByMemberId(memberId);
         memberLikeRepository.deleteAll(memberLikes);
         tagRepository.deleteAll(tags);

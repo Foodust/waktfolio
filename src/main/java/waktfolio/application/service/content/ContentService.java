@@ -13,7 +13,7 @@ public interface ContentService {
     FindMainContentResponse getMainMember();
     List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable);
     List<FindContentResponse> getContentGroup(UUID memberId, List<String> tag);
-    FindContentDetailResponse getContent(UUID memberId, UUID contentId);
+    FindContentDetailResponse getContent(HttpServletRequest request,UUID memberId, UUID contentId);
     ViewResponse viewContent(UUID contentId);
     LikeResponse upLikeContent(HttpServletRequest request, UUID contentId);
 }

@@ -33,6 +33,7 @@ import waktfolio.rest.dto.log.Count;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,8 +84,8 @@ public class ContentServiceImpl implements ContentService {
     public void updateContent(HttpServletRequest request, UpdateContentRequest updateContentRequest) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Content content = contentRepository.findById(updateContentRequest.getContentId()).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
-        contentMapper.updateContent(content,updateContentRequest);
-        if(updateContentRequest.getObject() != null){
+        contentMapper.updateContent(content, updateContentRequest);
+        if (updateContentRequest.getObject() != null) {
             String objectPath = uploadFile(memberId + "/" + objectName + "/" + updateContentRequest.getName(), objectName, updateContentRequest.getObject());
             content.setObjectPath(objectPath);
         }
@@ -140,16 +141,21 @@ public class ContentServiceImpl implements ContentService {
         List<FindContentResponse> findContentResponses = new ArrayList<>();
         contents.forEach(content -> {
             Long likes = memberLikeRepository.countByContentId(content.getId());
-            findContentResponses.add(contentMapper.findContentResponseOf(content, likes));
+            findContentResponses.add(contentMapper.findContentResponseOf(content, likes, 0L));
         });
         return findContentResponses;
     }
 
     @Override
-    public FindContentDetailResponse getContent(UUID memberId, UUID contentId) {
+    public FindContentDetailResponse getContent(HttpServletRequest request, UUID memberId, UUID contentId) {
         Content content = contentRepository.findByMemberIdAndIdAndUseYn(memberId, contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         Long likes = memberLikeRepository.countByContentId(contentId);
-        return contentMapper.findContentDetailResponseOf(content, likes);
+        AtomicReference<Boolean> isLike = new AtomicReference<>(false);
+        if (jwtTokenUtil.getSubjectFromHeader(request) != null) {
+            UUID seeMember = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
+            memberLikeRepository.findByMemberIdAndContentId(seeMember, contentId).ifPresent(a-> isLike.set(true));
+        }
+        return contentMapper.findContentDetailResponseOf(content, likes, 0L, isLike.get());
     }
 
     @Override
@@ -164,7 +170,7 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public LikeResponse upLikeContent(HttpServletRequest request, UUID contentId) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
-        MemberLike memberLike = memberLikeRepository.findByMemberIdAndContentId(memberId, contentId);
+        MemberLike memberLike = memberLikeRepository.findByMemberIdAndContentId(memberId, contentId).orElse(null);
         DayLike dayLike = dayLikeRepository.findByMemberIdAndContentId(memberId, contentId);
         LikeResponse likeResponse = new LikeResponse();
         if (memberLike != null && dayLike != null) {
@@ -196,11 +202,12 @@ public class ContentServiceImpl implements ContentService {
         }
     }
 
-    private Long getLike(UUID contentId){
+    private Long getLike(UUID contentId) {
         Long memberLikeCount = memberLikeRepository.countByContentId(contentId);
         Long dayLikeCount = dayLikeRepository.countByContentId(contentId);
         return memberLikeCount + dayLikeCount;
     }
+
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayLike() {
         List<DayLike> dayLikes = dayLikeRepository.findAll();
@@ -211,8 +218,8 @@ public class ContentServiceImpl implements ContentService {
     @Scheduled(cron = "0 0 0 * * *")
     public void getDayView() {
         List<Count> counts = dayViewRepository.countAllView();
-        counts.forEach(count->{
-            ContentView contentView = contentViewRepository.findByContentId(count.getContentId()).orElse(contentViewMapper.contentView(count.getContentId()));
+        counts.forEach(count -> {
+            ContentView contentView = contentViewRepository.findByContentId(count.getContentId()).orElse(contentViewMapper.contentView(count.getContentId(), 0L));
             contentView.setViewCount(contentView.getViewCount() + count.getCount());
         });
         dayViewRepository.deleteAll();

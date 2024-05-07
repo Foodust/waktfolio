@@ -38,11 +38,12 @@ public class ContentMapper {
                 .build();
     }
 
-    public FindContentDetailResponse findContentDetailResponseOf(Content content, Long likes) {
+    public FindContentDetailResponse findContentDetailResponseOf(Content content, Long likes,Long views,Boolean isLike) {
         return FindContentDetailResponse.builder()
                 .name(content.getName())
                 .description(content.getDescription())
                 .likes(likes)
+                .views(views)
                 .tagName(content.getTagName())
                 .backGroundColorCode(content.getBackGroundColorCode())
                 .backGroundPath(content.getBackGroundPath())
@@ -50,6 +51,7 @@ public class ContentMapper {
                 .objectPath(content.getObjectPath())
                 .youtubeLink(content.getYoutubeLink())
                 .contentId(content.getId())
+                .isLike(isLike)
                 .build();
     }
 
@@ -63,10 +65,11 @@ public class ContentMapper {
                 .build();
     }
 
-    public FindContentResponse findContentResponseOf(Content content, Long likes) {
+    public FindContentResponse findContentResponseOf(Content content, Long likes, Long views) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
                 .likes(likes)
+                .views(views)
                 .description(content.getDescription())
                 .thumbnailImagePath(content.getThumbnailImagePath())
                 .build();

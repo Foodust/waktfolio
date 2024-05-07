@@ -69,7 +69,7 @@ public class ContentController {
     @GetMapping("/{memberId}/{contentId}")
     @Tag(name = "콘텐트 상세조회 하기")
     public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID memberId, @PathVariable UUID contentId) {
-        FindContentDetailResponse allContent = contentService.getContent(memberId,contentId);
+        FindContentDetailResponse allContent = contentService.getContent(request, memberId,contentId);
         return new ResponseEntity<>(ApiResponse.of(request,allContent), HttpStatus.OK);
     }
 }

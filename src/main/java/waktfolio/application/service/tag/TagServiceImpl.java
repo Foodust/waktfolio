@@ -46,7 +46,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<FindTagResponse> findTag(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
-        List<Tag> tags = tagRepository.findByMemberId(memberId);
+        List<Tag> tags = tagRepository.findByMemberIdOrderByName(memberId);
         return tags.stream().map(tagMapper::findTagResponseFrom).toList();
     }
 }
