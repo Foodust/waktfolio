@@ -12,6 +12,7 @@ import java.util.UUID;
 
 public interface ContentCustomRepository {
     Optional<Long> sumViewByMemberId(UUID memberId);
+    Long countAddCountByMemberId(UUID memberId);
     List<Content> findByTagLikeIn(List<String> tags,Pageable pageable);
     List<FindContent> findOrderByCreateDate();
     List<Content> findByUseYn(Boolean useYn,Pageable pageable);

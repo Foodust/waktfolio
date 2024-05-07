@@ -62,8 +62,8 @@ public class ContentController {
 
     @GetMapping("/{memberId}")
     @Tag(name = "그룹 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID memberId, List<String> tags) {
-        List<FindContentResponse> allContentGroup = contentService.getContentGroup(memberId, tags);
+    public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID memberId) {
+        List<FindContentResponse> allContentGroup = contentService.getContentGroup(memberId);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
     @GetMapping("/{memberId}/{contentId}")

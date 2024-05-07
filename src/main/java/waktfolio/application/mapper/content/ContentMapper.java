@@ -68,6 +68,7 @@ public class ContentMapper {
     public FindContentResponse findContentResponseOf(Content content, Long likes, Long views) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
+                .name(content.getName())
                 .likes(likes)
                 .views(views)
                 .description(content.getDescription())

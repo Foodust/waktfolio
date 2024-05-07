@@ -9,9 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.QContent;
+import waktfolio.domain.entity.like.QDayLike;
 import waktfolio.domain.entity.like.QMemberLike;
 import waktfolio.domain.entity.member.QMember;
 import waktfolio.domain.entity.view.QContentView;
+import waktfolio.domain.entity.view.QDayView;
 import waktfolio.rest.dto.content.FindContent;
 
 import java.util.List;
@@ -26,21 +28,40 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     private final QContent content = QContent.content;
     private final QMember member = QMember.member;
     private final QMemberLike memberLike = QMemberLike.memberLike;
+    private final QDayLike dayLike = QDayLike.dayLike;
     private final QContentView contentView = QContentView.contentView;
+    private final QDayView dayView = QDayView.dayView;
 
+    @Override
+    public Long countAddCountByMemberId(UUID memberId) {
+        return queryFactory
+                .select(
+                        memberLike.count().add(dayLike.count())
+                )
+                .from(memberLike)
+                .join(content).on(content.id.eq(memberLike.contentId))
+                .join(dayLike).on(dayLike.contentId.eq(memberLike.contentId))
+                .where(
+                        isMemberId(memberId),
+                        isUseYn()
+                )
+                .fetchOne();
+    }
     @Override
     public Optional<Long> sumViewByMemberId(UUID memberId) {
         return Optional.ofNullable(queryFactory
-                .select(contentView.viewCount.sum())
+                .select(
+                        contentView.viewCount.sum().add(dayView.viewCount.sum())
+                )
                 .from(contentView)
                 .join(content).on(content.id.eq(contentView.contentId))
+                .join(dayView).on(dayView.contentId.eq(contentView.contentId))
                 .where(
                         isMemberId(memberId),
                         isUseYn()
                 )
                 .fetchOne());
     }
-
     @Override
     public List<Content> findByTagLikeIn(List<String> tags, Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
@@ -83,7 +104,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     }
 
     @Override
-    public List<Content> findByUseYn(Boolean useYn,Pageable pageable) {
+    public List<Content> findByUseYn(Boolean useYn, Pageable pageable) {
         return queryFactory
                 .selectFrom(content)
                 .where(

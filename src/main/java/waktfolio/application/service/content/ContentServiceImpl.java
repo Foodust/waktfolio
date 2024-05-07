@@ -67,6 +67,9 @@ public class ContentServiceImpl implements ContentService {
     public void createContent(HttpServletRequest request, CreateContentRequest createContentRequest) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Content content = contentMapper.contentFrom(memberId, createContentRequest);
+        if (createContentRequest.getObject() == null) {
+            throw BusinessException.NOT_EXITS_FILE();
+        }
         String objectPath = uploadFile(memberId + "/" + objectName + "/" + createContentRequest.getName(), objectName, createContentRequest.getObject());
         content.setObjectPath(objectPath);
         if (createContentRequest.getBackGround() != null) {
@@ -102,7 +105,6 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public FindMainContentResponse getMainMember() {
-
         // 최근 등록 순
         List<FindContent> createDateContents = contentRepository.findOrderByCreateDate();
         // 좋아요 순
@@ -127,7 +129,7 @@ public class ContentServiceImpl implements ContentService {
         List<Member> allGroups = memberRepository.findAllById(memberId);
         List<FindMemberResponse> findMemberResponse = new ArrayList<>();
         allGroups.forEach(member -> {
-            Long totalLike = memberLikeRepository.countByMemberId(member.getId());
+            Long totalLike = contentRepository.countAddCountByMemberId(member.getId());
             Long totalView = contentRepository.sumViewByMemberId(member.getId()).orElse(0L);
             findMemberResponse.add(contentMapper.findMemberResponseOf(member, totalLike, totalView));
         });
@@ -136,12 +138,11 @@ public class ContentServiceImpl implements ContentService {
 
     // 조회수 해야함 나중에 하삼
     @Override
-    public List<FindContentResponse> getContentGroup(UUID memberId, List<String> tags) {
-        List<Content> contents = contentRepository.findByMemberIdAndTagNameInAndUseYnOrderByTagNameAscCreateDateDesc(memberId, tags, true);
+    public List<FindContentResponse> getContentGroup(UUID memberId) {
+        List<Content> contents = contentRepository.findByMemberIdAndUseYnOrderByTagNameAscCreateDateDesc(memberId, true);
         List<FindContentResponse> findContentResponses = new ArrayList<>();
         contents.forEach(content -> {
-            Long likes = memberLikeRepository.countByContentId(content.getId());
-            findContentResponses.add(contentMapper.findContentResponseOf(content, likes, 0L));
+            findContentResponses.add(contentMapper.findContentResponseOf(content, getLike(content.getId()), getView(content.getId())));
         });
         return findContentResponses;
     }
@@ -149,40 +150,40 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public FindContentDetailResponse getContent(HttpServletRequest request, UUID memberId, UUID contentId) {
         Content content = contentRepository.findByMemberIdAndIdAndUseYn(memberId, contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
-        Long likes = memberLikeRepository.countByContentId(contentId);
         AtomicReference<Boolean> isLike = new AtomicReference<>(false);
         if (jwtTokenUtil.getSubjectFromHeader(request) != null) {
             UUID seeMember = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
-            memberLikeRepository.findByMemberIdAndContentId(seeMember, contentId).ifPresent(a-> isLike.set(true));
+            memberLikeRepository.findByMemberIdAndContentId(seeMember, contentId).ifPresent(a -> isLike.set(true));
         }
-        return contentMapper.findContentDetailResponseOf(content, likes, 0L, isLike.get());
+        return contentMapper.findContentDetailResponseOf(content, getLike(contentId), getView(contentId), isLike.get());
     }
 
     @Override
     public ViewResponse viewContent(UUID contentId) {
         contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         DayView dayView = dayViewRepository.findByContentId(contentId).orElse(DayView.builder().contentId(contentId).viewCount(0L).build());
-        ContentView contentView = contentViewRepository.findByContentId(contentId).orElse(ContentView.builder().contentId(contentId).viewCount(0L).build());
         dayView.setViewCount(dayView.getViewCount() + 1);
-        return countMapper.viewResponseOf(contentView.getViewCount() + dayView.getViewCount());
+        dayViewRepository.save(dayView);
+        return countMapper.viewResponseOf(getView(contentId));
     }
 
     @Override
     public LikeResponse upLikeContent(HttpServletRequest request, UUID contentId) {
+        LikeResponse likeResponse = LikeResponse.builder().isLike(false).build();
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
-        MemberLike memberLike = memberLikeRepository.findByMemberIdAndContentId(memberId, contentId).orElse(null);
+
         DayLike dayLike = dayLikeRepository.findByMemberIdAndContentId(memberId, contentId);
-        LikeResponse likeResponse = new LikeResponse();
-        if (memberLike != null && dayLike != null) {
-            memberLikeRepository.delete(memberLike);
-            dayLikeRepository.delete(dayLike);
-            likeResponse.setIsLike(false);
+        if (dayLike == null) {
+            MemberLike memberLike = memberLikeRepository.findByMemberIdAndContentId(memberId, contentId).orElse(null);
+            if (memberLike != null) {
+                memberLikeRepository.delete(memberLike);
+            } else {
+                DayLike dayLikeOn = contentMapper.dayLikeOf(memberId, contentId);
+                dayLikeRepository.save(dayLikeOn);
+                likeResponse.setIsLike(true);
+            }
         } else {
-            MemberLike memberLikeOn = contentMapper.memberLikeOf(memberId, contentId);
-            DayLike dayLikeOn = contentMapper.dayLikeOf(memberId, contentId);
-            memberLikeRepository.save(memberLikeOn);
-            dayLikeRepository.save(dayLikeOn);
-            likeResponse.setIsLike(true);
+            dayLikeRepository.delete(dayLike);
         }
         likeResponse.setTotalLikeCount(getLike(contentId));
         return likeResponse;
@@ -203,9 +204,13 @@ public class ContentServiceImpl implements ContentService {
     }
 
     private Long getLike(UUID contentId) {
-        Long memberLikeCount = memberLikeRepository.countByContentId(contentId);
-        Long dayLikeCount = dayLikeRepository.countByContentId(contentId);
-        return memberLikeCount + dayLikeCount;
+        return memberLikeRepository.countAddCountByContentId(contentId);
+    }
+
+    private Long getView(UUID contentId) {
+        ContentView contentView = contentViewRepository.findByContentId(contentId).orElse(ContentView.builder().viewCount(0L).build());
+        DayView dayView = dayViewRepository.findByContentId(contentId).orElse(DayView.builder().viewCount(0L).build());
+        return contentView.getViewCount() + dayView.getViewCount();
     }
 
     @Scheduled(cron = "0 0 0 * * *")

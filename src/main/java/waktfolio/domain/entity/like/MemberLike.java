@@ -20,19 +20,10 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberLike {
-    @Id
-    @UuidGenerator
-    @Column(updatable = false,nullable = false)
-    private UUID id;
-
-    private LocalDateTime createDate;
-
-    private LocalDateTime updateDate;
-
+public class MemberLike extends BaseEntity{
     private UUID memberId;
     private UUID contentId;
 }

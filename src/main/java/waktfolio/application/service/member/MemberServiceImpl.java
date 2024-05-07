@@ -102,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberProfileResponse profile(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
-        Long totalLike = memberLikeRepository.countByMemberId(memberId);
+        Long totalLike = contentRepository.countAddCountByMemberId(memberId);
         Long totalView = contentRepository.sumViewByMemberId(memberId).orElse(0L);
         return memberMapper.memberProfileResponseOf(member, totalLike, totalView);
     }

@@ -14,6 +14,7 @@ public enum ApplicationErrorCode {
   NOT_FOUND_CONTENT(400, "존재 하지 않는 콘텐츠 입니다"),
   ALREADY_EXITS_TAG_NAME(400, "이미 존재하는 태그입니다."),
   ALREADY_EXITS_NAME(400, "중복된 닉네임 입니다."),
+  NOT_EXITS_FILE(400,"파일이 없습니다."),
   NOT_FOUND_TAG(400, "태그를 찾을 수 없습니다."),
   NOT_FOUND_MAN_MONTH_INFO(400, "존재 하지 않는 멤버 공수 입니다."),
   NOT_MATCHED_PASSWORD(400, "비밀 번호가 일치 하지 않습니다."),

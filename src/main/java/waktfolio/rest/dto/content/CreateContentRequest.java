@@ -8,9 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 
-@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class CreateContentRequest implements Serializable {
     @NotEmpty

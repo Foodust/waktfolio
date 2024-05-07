@@ -15,7 +15,7 @@ import waktfolio.domain.entity.member.MemberPermission;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class JwtSecurityConfig{
+public class JwtSecurityConfig {
     private final SecurityMemberService securityMemberService;
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -24,24 +24,20 @@ public class JwtSecurityConfig{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers((headerConfig) -> headerConfig.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .addFilterBefore(new JwtSecurityFilter(jwtTokenUtil,securityMemberService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtSecurityFilter(jwtTokenUtil, securityMemberService), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/member",
                                 "/api/member/**",
-                                "/api/content",
-                                "/api/content**",
-                                "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/v3/api-docs/**"
+                                "/api/content"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/member",
                                 "/api/member/**",
                                 "/api/content",
-                                "/api/content**",
+                                "/api/content/**",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                                 "/v3/api-docs/**"
@@ -50,11 +46,7 @@ public class JwtSecurityConfig{
                                 HttpMethod.PATCH,
                                 "/api/member",
                                 "/api/member/**",
-                                "/api/content",
-                                "/api/content**",
-                                "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/v3/api-docs/**"
+                                "/api/content/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.DELETE,
@@ -68,7 +60,11 @@ public class JwtSecurityConfig{
                                 "/api/aws/**",
                                 "/api/admin",
                                 "/api/admin/**",
-                                "/api/aws/**"
+                                "/api/aws/**",
+                                "/api/content",
+                                "/api/content/**",
+                                "/api/member",
+                                "/api/member/**"
                         ).hasAuthority(MemberPermission.ADMIN.name())
                 );
         return http.build();

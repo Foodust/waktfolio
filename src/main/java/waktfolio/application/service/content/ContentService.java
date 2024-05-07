@@ -12,7 +12,7 @@ public interface ContentService {
     void updateContent(HttpServletRequest request,UpdateContentRequest updateContentRequest);
     FindMainContentResponse getMainMember();
     List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable);
-    List<FindContentResponse> getContentGroup(UUID memberId, List<String> tag);
+    List<FindContentResponse> getContentGroup(UUID memberId);
     FindContentDetailResponse getContent(HttpServletRequest request,UUID memberId, UUID contentId);
     ViewResponse viewContent(UUID contentId);
     LikeResponse upLikeContent(HttpServletRequest request, UUID contentId);
