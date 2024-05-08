@@ -18,6 +18,7 @@ import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.domain.repository.like.MemberLikeRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.domain.repository.tag.TagRepository;
+import waktfolio.domain.repository.view.ContentViewRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
 import waktfolio.rest.dto.member.*;
@@ -35,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ContentRepository contentRepository;
     private final MemberLikeRepository memberLikeRepository;
+    private final ContentViewRepository contentViewRepository;
     private final TagRepository tagRepository;
 
     private final JwtTokenUtil jwtTokenUtil;
@@ -102,9 +104,13 @@ public class MemberServiceImpl implements MemberService {
     public MemberProfileResponse profile(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
-        Long totalLike = contentRepository.countAddCountByMemberId(memberId);
-        Long totalView = contentRepository.sumViewByMemberId(memberId).orElse(0L);
-        return memberMapper.memberProfileResponseOf(member, totalLike, totalView);
+        return memberMapper.memberProfileResponseOf(member, getLikeMemberId(memberId), getViewMemberId(memberId));
+    }
+    private Long getLikeMemberId(UUID memberId) {
+        return memberLikeRepository.countAddCountByMemberId(memberId);
+    }
+    private Long getViewMemberId(UUID memberId) {
+        return contentViewRepository.sumAddSumByMemberId(memberId);
     }
 
     private String uploadProfileImageFile(String path, String name, MultipartFile file) {

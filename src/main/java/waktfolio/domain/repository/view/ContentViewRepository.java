@@ -7,6 +7,6 @@ import waktfolio.domain.entity.view.DayView;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ContentViewRepository extends JpaRepository<ContentView, UUID> {
+public interface ContentViewRepository extends JpaRepository<ContentView, UUID>,ContentViewCustomRepository {
     Optional<ContentView> findByContentId(UUID contentId);
 }

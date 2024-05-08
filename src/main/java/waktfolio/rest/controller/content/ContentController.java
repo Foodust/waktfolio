@@ -60,16 +60,16 @@ public class ContentController {
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
 
-    @GetMapping("/{memberId}")
+    @GetMapping("/group/{memberId}")
     @Tag(name = "그룹 상세조회 하기")
     public ResponseEntity<ApiResponse> getContentGroup(HttpServletRequest request, @PathVariable UUID memberId) {
         List<FindContentResponse> allContentGroup = contentService.getContentGroup(memberId);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }
-    @GetMapping("/{memberId}/{contentId}")
+    @GetMapping("/{contentId}")
     @Tag(name = "콘텐트 상세조회 하기")
-    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID memberId, @PathVariable UUID contentId) {
-        FindContentDetailResponse allContent = contentService.getContent(request, memberId,contentId);
+    public ResponseEntity<ApiResponse> getContent(HttpServletRequest request, @PathVariable UUID contentId) {
+        FindContentDetailResponse allContent = contentService.getContent(request, contentId);
         return new ResponseEntity<>(ApiResponse.of(request,allContent), HttpStatus.OK);
     }
 }

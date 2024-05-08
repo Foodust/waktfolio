@@ -24,9 +24,24 @@ public class MemberLikeCustomRepositoryImpl implements MemberLikeCustomRepositor
                         dayLike.count().add(memberLike.count())
                 )
                 .from(dayLike)
-                .join(memberLike).on(memberLike.contentId.eq(contentId))
+                .leftJoin(memberLike).on(memberLike.contentId.eq(contentId))
                 .where(
                         dayLike.contentId.eq(contentId)
+                )
+                .fetchOne();
+    }
+
+    @Override
+    public Long countAddCountByMemberId(UUID memberId) {
+        return queryFactory
+                .select(
+                        dayLike.count().add(memberLike.count())
+                )
+                .from(dayLike)
+                .join(content).on(content.memberId.eq(memberId))
+                .leftJoin(memberLike).on(memberLike.contentId.eq(content.id))
+                .where(
+                        dayLike.contentId.eq(content.id)
                 )
                 .fetchOne();
     }

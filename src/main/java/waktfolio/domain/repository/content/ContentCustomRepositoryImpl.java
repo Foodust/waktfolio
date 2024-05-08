@@ -87,7 +87,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
         return queryFactory
                 .select(Projections.bean(FindContent.class,
                         content.id.as("contentId"),
-                        member.name,
+                        member.name.as("memberName"),
                         content.name,
                         content.thumbnailImagePath
                 ))
