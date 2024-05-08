@@ -9,6 +9,7 @@ import waktfolio.rest.dto.member.RegisterMemberRequest;
 import waktfolio.rest.dto.member.UpdateMemberRequest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class MemberMapper {
@@ -21,10 +22,12 @@ public class MemberMapper {
     }
     public Member memberFrom(RegisterMemberRequest registerMemberRequest, String encodePassword){
         return Member.builder()
+                .id(UUID.randomUUID())
                 .loginId(registerMemberRequest.getLoginId())
                 .password(encodePassword)
                 .name(registerMemberRequest.getName())
                 .memberPermission(MemberPermission.MEMBER)
+                .useYn(true)
                 .build();
     }
     public MemberProfileResponse memberProfileResponseOf(Member member , Long totalLike , Long totalView){

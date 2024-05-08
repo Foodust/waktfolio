@@ -1,7 +1,7 @@
 package waktfolio.application.service.member;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +12,16 @@ import org.springframework.web.multipart.MultipartFile;
 import waktfolio.application.mapper.member.MemberMapper;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.entity.content.Tag;
+import waktfolio.domain.entity.like.DayLike;
 import waktfolio.domain.entity.like.MemberLike;
 import waktfolio.domain.entity.member.Member;
 import waktfolio.domain.repository.content.ContentRepository;
+import waktfolio.domain.repository.like.DayLikeRepository;
 import waktfolio.domain.repository.like.MemberLikeRepository;
 import waktfolio.domain.repository.member.MemberRepository;
 import waktfolio.domain.repository.tag.TagRepository;
 import waktfolio.domain.repository.view.ContentViewRepository;
+import waktfolio.domain.repository.view.DayViewRepository;
 import waktfolio.exception.BusinessException;
 import waktfolio.jwt.JwtTokenUtil;
 import waktfolio.rest.dto.member.*;
@@ -36,6 +39,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ContentRepository contentRepository;
     private final MemberLikeRepository memberLikeRepository;
+    private final DayLikeRepository dayLikeRepository;
     private final ContentViewRepository contentViewRepository;
     private final TagRepository tagRepository;
 
@@ -49,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
     private String bucket;
 
     @Override
-    public LoginMemberResponse login(LoginMemberRequest loginMemberRequest) {
+    public LoginMemberResponse loginMember(LoginMemberRequest loginMemberRequest) {
         Member member = memberRepository.findByLoginId(loginMemberRequest.getLoginId()).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         if (!passwordEncoder.matches(loginMemberRequest.getPassword(), member.getPassword())) {
             throw BusinessException.NOT_MATCHED_PASSWORD();
@@ -59,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void update(HttpServletRequest request, UpdateMemberRequest updateMemberRequest) {
+    public void updateMember(HttpServletRequest request, UpdateMemberRequest updateMemberRequest) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         if (updateMemberRequest.getProfileImage() != null) {
@@ -71,12 +75,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void delete(HttpServletRequest request) {
+    public void deleteMember(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         List<Content> contents = contentRepository.findByMemberId(memberId);
         List<Tag> tags = tagRepository.findByMemberIdOrderByName(memberId);
         List<MemberLike> memberLikes = memberLikeRepository.findByMemberId(memberId);
+        List<DayLike> dayLikes = dayLikeRepository.findByMemberId(memberId);
+        deleteAwsFile(memberId.toString());
+        dayLikeRepository.deleteAll(dayLikes);
         memberLikeRepository.deleteAll(memberLikes);
         tagRepository.deleteAll(tags);
         contentRepository.deleteAll(contents);
@@ -84,7 +91,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void register(RegisterMemberRequest registerMemberRequest) {
+    public void registerMember(RegisterMemberRequest registerMemberRequest) {
         memberRepository.findByLoginId(registerMemberRequest.getLoginId()).ifPresent(a -> {
             throw BusinessException.ALREADY_EXISTS_USER_ID();
         });
@@ -101,14 +108,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberProfileResponse profile(HttpServletRequest request) {
+    public MemberProfileResponse profileMember(HttpServletRequest request) {
         UUID memberId = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));
         Member member = memberRepository.findById(memberId).orElseThrow(BusinessException::NOT_FOUND_MEMBER);
         return memberMapper.memberProfileResponseOf(member, getLikeMemberId(memberId), getViewMemberId(memberId));
     }
+
     private Long getLikeMemberId(UUID memberId) {
         return memberLikeRepository.countAddCountByMemberId(memberId);
     }
+
     private Long getViewMemberId(UUID memberId) {
         return contentViewRepository.sumAddSumByMemberId(memberId);
     }
@@ -124,6 +133,18 @@ public class MemberServiceImpl implements MemberService {
             return fileName;
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteAwsFile(String path) {
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
+                .withBucketName(bucket)
+                .withPrefix(path + "/");
+        ObjectListing objectListing = amazonS3Client.listObjects(listObjectsRequest);
+        List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+        for (S3ObjectSummary objectSummary : objectSummaries) {
+            String key = objectSummary.getKey();
+            amazonS3Client.deleteObject(bucket, key);
         }
     }
 }
