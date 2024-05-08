@@ -40,7 +40,6 @@ public class Member{
     private String password;
     private String name;
     private String profileImagePath;
-    private List<String> tags;
     @Enumerated(value = EnumType.STRING)
     private MemberPermission memberPermission;
     private Boolean useYn;
