@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FindMainContentResponse {
-    List<FindContent> mainMember;
-    List<FindContent> newMember;
-    List<FindContent> likeMember;
-    List<FindContent> viewMember;
+    List<FindContent> mainContent;
+    List<FindContent> newContent;
+    List<FindContent> likeContent;
+    List<FindContent> viewContent;
 }

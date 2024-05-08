@@ -124,7 +124,7 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable) {
-        List<Content> contents = contentRepository.findByTagLikeIn(tags, pageable);
+        List<Content> contents = contentRepository.findByTagLikeIn(tags != null ? tags : new ArrayList<>(), pageable);
         Set<UUID> memberIds = contents.stream().map(Content::getMemberId).collect(Collectors.toSet());
         List<Member> allGroups = memberRepository.findAllById(memberIds);
         List<FindMemberResponse> findMemberResponse = new ArrayList<>();
@@ -146,7 +146,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public FindContentDetailResponse getContent(HttpServletRequest request,UUID contentId) {
+    public FindContentDetailResponse getContent(HttpServletRequest request, UUID contentId) {
         Content content = contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         AtomicReference<Boolean> isLike = new AtomicReference<>(false);
         if (jwtTokenUtil.getSubjectFromHeader(request) != null) {

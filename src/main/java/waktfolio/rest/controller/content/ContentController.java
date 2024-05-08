@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import waktfolio.application.service.content.ContentService;
 import waktfolio.rest.ApiResponse;
@@ -55,7 +56,7 @@ public class ContentController {
 
     @GetMapping("")
     @Tag(name = "그룹 검색하기")
-    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, @RequestParam List<String> tags, Pageable pageable){
+    public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, @RequestParam @Nullable List<String> tags, Pageable pageable){
         List<FindMemberResponse> allContentGroup = contentService.findAllContentGroup(tags,pageable);
         return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
     }

@@ -54,7 +54,19 @@ public class ContentMapper {
                 .isLike(isLike)
                 .build();
     }
-
+    public FindContentDetailResponse findContentDetailResponseOf(Content content) {
+        return FindContentDetailResponse.builder()
+                .name(content.getName())
+                .description(content.getDescription())
+                .tagName(content.getTagName())
+                .backGroundColorCode(content.getBackGroundColorCode())
+                .backGroundPath(content.getBackGroundPath())
+                .cafeLink(content.getCafeLink())
+                .objectPath(content.getObjectPath())
+                .youtubeLink(content.getYoutubeLink())
+                .contentId(content.getId())
+                .build();
+    }
     public FindMemberResponse findMemberResponseOf(Member member, Long likes, Long views) {
         return FindMemberResponse.builder()
                 .memberName(member.getName())
@@ -78,16 +90,17 @@ public class ContentMapper {
     public FindContentResponse findContentResponseOf(Content content) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
+                .name(content.getName())
                 .description(content.getDescription())
                 .thumbnailImagePath(content.getThumbnailImagePath())
                 .build();
     }
     public FindMainContentResponse findMainContentResponseOf(List<FindContent> main, List<FindContent> createDate, List<FindContent> like, List<FindContent> view) {
         return FindMainContentResponse.builder()
-                .mainMember(main)
-                .newMember(createDate)
-                .likeMember(like)
-                .viewMember(view)
+                .mainContent(main)
+                .newContent(createDate)
+                .likeContent(like)
+                .viewContent(view)
                 .build();
     }
     public void updateContent(Content content, UpdateContentRequest updateContentRequest){
