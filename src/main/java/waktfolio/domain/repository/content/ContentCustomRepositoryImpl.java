@@ -65,13 +65,18 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     @Override
     public List<Content> findByTagLikeIn(List<String> tags, Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
+        BooleanBuilder isNames = new BooleanBuilder();
+        BooleanBuilder isMemberNames = new BooleanBuilder();
         for (String tag : tags) {
             isTags.or(content.tagName.containsIgnoreCase(tag));
+            isNames.or(content.name.containsIgnoreCase(tag));
+            isMemberNames.or(member.name.containsIgnoreCase(tag));
         }
         return queryFactory
                 .selectFrom(content)
+                .join(member).on(member.id.eq(content.memberId))
                 .where(
-                        isTags,
+                        isTags.or(isNames.or(isMemberNames)),
                         isUseYn()
                 )
                 .orderBy(
