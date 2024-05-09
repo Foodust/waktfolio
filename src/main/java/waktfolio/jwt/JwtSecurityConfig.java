@@ -30,7 +30,8 @@ public class JwtSecurityConfig {
                                 HttpMethod.POST,
                                 "/api/member",
                                 "/api/member/**",
-                                "/api/content"
+                                "/api/content",
+                                "/api/tag"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
@@ -38,6 +39,7 @@ public class JwtSecurityConfig {
                                 "/api/member/**",
                                 "/api/content",
                                 "/api/content/**",
+                                "/api/tag",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                                 "/v3/api-docs/**"
@@ -46,14 +48,16 @@ public class JwtSecurityConfig {
                                 HttpMethod.PATCH,
                                 "/api/member",
                                 "/api/member/**",
-                                "/api/content/**"
+                                "/api/content/**",
+                                "/api/tag"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/member",
                                 "/api/member/**",
                                 "/api/content",
-                                "/api/content**"
+                                "/api/content**",
+                                "/api/tag/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/aws",
@@ -64,7 +68,9 @@ public class JwtSecurityConfig {
                                 "/api/content",
                                 "/api/content/**",
                                 "/api/member",
-                                "/api/member/**"
+                                "/api/member/**",
+                                "/api/tag",
+                                "/api/tag/**"
                         ).hasAuthority(MemberPermission.ADMIN.name())
                 );
         return http.build();

@@ -18,13 +18,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Content extends BaseEntity {
     private UUID memberId;
+    private UUID tagId;
     private String name;
     private String description;
     private String thumbnailImagePath;
     private String objectPath;
     private String backGroundPath;
     private String backGroundColorCode;
-    private String tagName;
     private String youtubeLink;
     private String cafeLink;
     private Boolean useYn;

@@ -13,6 +13,7 @@ import waktfolio.application.mapper.content.ContentMapper;
 import waktfolio.domain.entity.content.Content;
 import waktfolio.domain.repository.content.ContentRepository;
 import waktfolio.rest.dto.admin.ContentListRequest;
+import waktfolio.rest.dto.content.FindContentDetail;
 import waktfolio.rest.dto.content.FindContentDetailResponse;
 import waktfolio.rest.dto.content.FindContentResponse;
 
@@ -31,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<FindContentDetailResponse> getBeforeList(Pageable pageable) {
-        List<Content> contents = contentRepository.findByUseYn(false, pageable);
+        List<FindContentDetail> contents = contentRepository.findByUseYn(false, pageable);
         return contents.stream().map(contentMapper::findContentDetailResponseOf).toList();
     }
 

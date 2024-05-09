@@ -135,7 +135,6 @@ public class ContentServiceImpl implements ContentService {
         return findMemberResponse;
     }
 
-    // 조회수 해야함 나중에 하삼
     @Override
     public List<FindContentResponse> getContentGroup(UUID memberId) {
         List<Content> contents = contentRepository.findByMemberIdAndUseYnOrderByTagNameAscCreateDateDesc(memberId, true);
@@ -148,7 +147,7 @@ public class ContentServiceImpl implements ContentService {
 
     @Override
     public FindContentDetailResponse getContent(HttpServletRequest request, UUID contentId) {
-        Content content = contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
+        FindContentDetail content = contentRepository.findByIdAndUseYn(contentId, true).orElseThrow(BusinessException::NOT_FOUND_CONTENT);
         AtomicReference<Boolean> isLike = new AtomicReference<>(false);
         if (jwtTokenUtil.getSubjectFromHeader(request) != null) {
             UUID seeMember = UUID.fromString(jwtTokenUtil.getSubjectFromHeader(request));

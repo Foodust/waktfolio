@@ -64,6 +64,6 @@ public class DayViewCustomRepositoryImpl implements DayViewCustomRepository {
         return content.useYn.eq(true);
     }
     public Expression<Long> getDayView(ComparablePath<UUID> contentId, String name) {
-        return ExpressionUtils.as(JPAExpressions.select(dayView.viewCount).from(dayView).where(dayView.contentId.eq(contentId)), name);
+        return ExpressionUtils.as(JPAExpressions.select(dayView.viewCount.coalesce(0L)).from(dayView).where(dayView.contentId.eq(contentId)), name);
     }
 }

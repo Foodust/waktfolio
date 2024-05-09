@@ -16,7 +16,7 @@ public class UpdateContentRequest implements Serializable {
     @NotEmpty
     @NotNull
     private UUID contentId;
-
+    private UUID tagId;
     @Length(min = 1,max = 20)
     private String name;
     @Length(min = 1,max = 50)
@@ -25,8 +25,6 @@ public class UpdateContentRequest implements Serializable {
     private MultipartFile object;
     private MultipartFile backGround;
     private String backGroundColorCode;
-    @Length(min = 1,max = 20)
-    private String tagName;
     private String youtubeLink;
     private String cafeLink;
 }

@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -25,8 +26,7 @@ public class CreateContentRequest implements Serializable {
     private String backGroundColorCode;
     @NotEmpty
     @NotNull
-    @Length(min = 1,max = 20)
-    private String tagName;
+    private UUID tagId;
     private String youtubeLink;
     private String cafeLink;
 }

@@ -30,7 +30,7 @@ public class ContentMapper {
                 .memberId(memberId)
                 .name(createContentRequest.getName())
                 .description(createContentRequest.getDescription())
-                .tagName(createContentRequest.getTagName())
+                .tagId(createContentRequest.getTagId())
                 .backGroundColorCode(createContentRequest.getBackGroundColorCode())
                 .cafeLink(createContentRequest.getCafeLink())
                 .youtubeLink(createContentRequest.getYoutubeLink())
@@ -38,33 +38,33 @@ public class ContentMapper {
                 .build();
     }
 
-    public FindContentDetailResponse findContentDetailResponseOf(Content content, Long likes,Long views,Boolean isLike) {
+    public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail, Long likes,Long views,Boolean isLike) {
         return FindContentDetailResponse.builder()
-                .name(content.getName())
-                .description(content.getDescription())
+                .name(findContentDetail.getName())
+                .description(findContentDetail.getDescription())
                 .likes(likes)
                 .views(views)
-                .tagName(content.getTagName())
-                .backGroundColorCode(content.getBackGroundColorCode())
-                .backGroundPath(content.getBackGroundPath())
-                .cafeLink(content.getCafeLink())
-                .objectPath(content.getObjectPath())
-                .youtubeLink(content.getYoutubeLink())
-                .contentId(content.getId())
+                .tagName(findContentDetail.getTagName())
+                .backGroundColorCode(findContentDetail.getBackGroundColorCode())
+                .backGroundPath(findContentDetail.getBackGroundPath())
+                .cafeLink(findContentDetail.getCafeLink())
+                .objectPath(findContentDetail.getObjectPath())
+                .youtubeLink(findContentDetail.getYoutubeLink())
+                .contentId(findContentDetail.getId())
                 .isLike(isLike)
                 .build();
     }
-    public FindContentDetailResponse findContentDetailResponseOf(Content content) {
+    public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail) {
         return FindContentDetailResponse.builder()
-                .name(content.getName())
-                .description(content.getDescription())
-                .tagName(content.getTagName())
-                .backGroundColorCode(content.getBackGroundColorCode())
-                .backGroundPath(content.getBackGroundPath())
-                .cafeLink(content.getCafeLink())
-                .objectPath(content.getObjectPath())
-                .youtubeLink(content.getYoutubeLink())
-                .contentId(content.getId())
+                .name(findContentDetail.getName())
+                .description(findContentDetail.getDescription())
+                .tagName(findContentDetail.getTagName())
+                .backGroundColorCode(findContentDetail.getBackGroundColorCode())
+                .backGroundPath(findContentDetail.getBackGroundPath())
+                .cafeLink(findContentDetail.getCafeLink())
+                .objectPath(findContentDetail.getObjectPath())
+                .youtubeLink(findContentDetail.getYoutubeLink())
+                .contentId(findContentDetail.getId())
                 .build();
     }
     public FindMemberResponse findMemberResponseOf(Member member, Long likes, Long views) {
@@ -105,6 +105,7 @@ public class ContentMapper {
     }
     public void updateContent(Content content, UpdateContentRequest updateContentRequest){
         Optional.ofNullable(updateContentRequest.getName()).ifPresent(content::setName);
+        Optional.ofNullable(updateContentRequest.getTagId()).ifPresent(content::setTagId);
         Optional.ofNullable(updateContentRequest.getDescription()).ifPresent(content::setDescription);
         Optional.ofNullable(updateContentRequest.getBackGroundColorCode()).ifPresent(content::setBackGroundColorCode);
         Optional.ofNullable(updateContentRequest.getCafeLink()).ifPresent(content::setCafeLink);
