@@ -203,7 +203,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     private Long getLikeContentId(UUID contentId) {
-        return memberLikeRepository.countAddCountByContentId(contentId).longValue();
+        return memberLikeRepository.countAddCountByContentId(contentId);
     }
 
     private Long getLikeMemberId(UUID memberId) {

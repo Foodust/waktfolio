@@ -21,12 +21,12 @@ public class MemberLikeCustomRepositoryImpl implements MemberLikeCustomRepositor
     private final EntityManager entityManager;
 
     @Override
-    public BigDecimal countAddCountByContentId(UUID contentId) {
+    public Long countAddCountByContentId(UUID contentId) {
         String sqlQuery = "SELECT (COUNT(dl.id) + COUNT(ml.id)) " +
                 "FROM day_like dl " +
-                "JOIN member_like ml ON ml.content_id = dl.content_id " +
-                "WHERE ml.content_id = :contentId";
-        return (BigDecimal) entityManager
+                "FULL OUTER JOIN member_like ml ON ml.content_id = dl.content_id " +
+                "WHERE dl.content_id = :contentId";
+        return (Long) entityManager
                 .createNativeQuery(sqlQuery)
                 .setParameter("contentId", contentId)
                 .getSingleResult();
