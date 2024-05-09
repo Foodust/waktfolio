@@ -32,6 +32,7 @@ import waktfolio.rest.dto.content.*;
 import waktfolio.rest.dto.log.Count;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -202,7 +203,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     private Long getLikeContentId(UUID contentId) {
-        return memberLikeRepository.countAddCountByContentId(contentId);
+        return memberLikeRepository.countAddCountByContentId(contentId).longValue();
     }
 
     private Long getLikeMemberId(UUID memberId) {
@@ -210,7 +211,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     private Long getViewContentId(UUID contentId) {
-        return contentViewRepository.sumAddSumByContentId(contentId);
+        return contentViewRepository.sumAddSumByContentId(contentId).longValue();
     }
 
     private Long getViewMemberId(UUID memberId) {

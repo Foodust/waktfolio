@@ -20,10 +20,22 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberLike extends BaseEntity{
+public class MemberLike{
+    @Id
+    @UuidGenerator
+    @Column(updatable = false,nullable = false)
+    private UUID id;
+
+    @Column(nullable = false)
+    private LocalDateTime createDate;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+
+    private LocalDateTime updateDate;
     private UUID memberId;
     private UUID contentId;
 }

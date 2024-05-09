@@ -43,6 +43,7 @@ public class DayViewCustomRepositoryImpl implements DayViewCustomRepository {
                 .where(
                         isUseYn()
                 )
+                .limit(5)
                 .join(member).on(member.id.eq(content.memberId))
                 .fetch();
     }

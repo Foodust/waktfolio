@@ -45,6 +45,7 @@ public class DayLikeCustomRepositoryImpl implements DayLikeCustomRepository {
                         isUseYn()
                 )
                 .join(member).on(member.id.eq(content.memberId))
+                .limit(5)
                 .fetch();
     }
 
