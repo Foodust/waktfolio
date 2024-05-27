@@ -13,4 +13,5 @@ public interface TagService {
     void deleteTag(HttpServletRequest request, UUID tagId);
     void updateTag(HttpServletRequest request, UpdateTagRequest updateTagRequest);
     List<FindTagResponse> findTag(HttpServletRequest request);
+    List<FindTagResponse> findTags();
 }

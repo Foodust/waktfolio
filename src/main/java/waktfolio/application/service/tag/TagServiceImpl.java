@@ -49,4 +49,10 @@ public class TagServiceImpl implements TagService {
         List<Tag> tags = tagRepository.findByMemberIdOrderByName(memberId);
         return tags.stream().map(tagMapper::findTagResponseFrom).toList();
     }
+
+    @Override
+    public List<FindTagResponse> findTags() {
+        List<Tag> tags = tagRepository.findTop10ByOrderByCreateDateDesc();
+        return tags.stream().map(tagMapper::findTagResponseFrom).toList();
+    }
 }

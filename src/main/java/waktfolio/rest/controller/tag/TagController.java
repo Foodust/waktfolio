@@ -3,6 +3,7 @@ package waktfolio.rest.controller.tag;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +29,20 @@ public class TagController {
         tagService.createTag(request,createTagRequest);
         return new ResponseEntity<>(ApiResponse.of(request), HttpStatus.OK);
     }
-
     @GetMapping("")
     @Tag(name = "태그들 가져오기")
     public ResponseEntity<ApiResponse> getTag(HttpServletRequest request){
         List<FindTagResponse> tags = tagService.findTag(request);
         return new ResponseEntity<>(ApiResponse.of(request,tags),HttpStatus.OK);
     }
+    @GetMapping("/main")
+    @Tag(name ="메인 추천 태그 가져오기")
+    public ResponseEntity<ApiResponse> getTags(HttpServletRequest request){
+        List<FindTagResponse> tags = tagService.findTags();
+        return new ResponseEntity<>(ApiResponse.of(request,tags),HttpStatus.OK);
+    }
+
+
     @PatchMapping("")
     @Tag(name = "태그 수정하기")
     public ResponseEntity<ApiResponse> updateTag(HttpServletRequest request, @RequestBody UpdateTagRequest updateTagRequest){

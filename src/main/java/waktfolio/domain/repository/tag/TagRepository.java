@@ -10,5 +10,6 @@ import java.util.UUID;
 public interface TagRepository extends JpaRepository<Tag, UUID> {
     Optional<Tag> findByMemberIdAndName(UUID memberId, String name);
     List<Tag> findByMemberIdOrderByName(UUID memberId);
+    List<Tag> findTop10ByOrderByCreateDateDesc();
     Optional<Tag> findByIdAndMemberId(UUID tagId, UUID memberId);
 }
