@@ -36,7 +36,7 @@ public class DayLikeCustomRepositoryImpl implements DayLikeCustomRepository {
                 .select(Projections.bean(FindContent.class,
                         content.id.as("contentId"),
                         member.name.as("memberName"),
-                        content.name,
+                        content.title,
                         content.thumbnailImagePath,
                         getDayLike(content.id,"likes")
                         ))

@@ -35,7 +35,7 @@ public class DayViewCustomRepositoryImpl implements DayViewCustomRepository {
                 .select(Projections.bean(FindContent.class,
                         content.id.as("contentId"),
                         member.name.as("memberName"),
-                        content.name,
+                        content.title,
                         content.thumbnailImagePath,
                         getDayView(content.id,"views")
                 ))

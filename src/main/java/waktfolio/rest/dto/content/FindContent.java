@@ -12,7 +12,7 @@ import java.util.UUID;
 public class FindContent {
     private UUID contentId;
     private String memberName;
-    private String name;
+    private String title;
     private String thumbnailImagePath;
     private Long likes;
     private Long views;

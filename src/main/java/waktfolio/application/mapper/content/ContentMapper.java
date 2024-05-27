@@ -28,7 +28,7 @@ public class ContentMapper {
     public Content contentFrom(UUID memberId, CreateContentRequest createContentRequest){
         return Content.builder()
                 .memberId(memberId)
-                .name(createContentRequest.getName())
+                .title(createContentRequest.getName())
                 .description(createContentRequest.getDescription())
                 .tagId(createContentRequest.getTagId())
                 .backGroundColorCode(createContentRequest.getBackGroundColorCode())
@@ -40,7 +40,7 @@ public class ContentMapper {
 
     public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail, Long likes,Long views,Boolean isLike) {
         return FindContentDetailResponse.builder()
-                .name(findContentDetail.getName())
+                .name(findContentDetail.getTitle())
                 .description(findContentDetail.getDescription())
                 .likes(likes)
                 .views(views)
@@ -56,7 +56,7 @@ public class ContentMapper {
     }
     public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail) {
         return FindContentDetailResponse.builder()
-                .name(findContentDetail.getName())
+                .name(findContentDetail.getTitle())
                 .description(findContentDetail.getDescription())
                 .tagName(findContentDetail.getTagName())
                 .backGroundColorCode(findContentDetail.getBackGroundColorCode())
@@ -80,7 +80,7 @@ public class ContentMapper {
     public FindContentResponse findContentResponseOf(Content content, Long likes, Long views) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
-                .name(content.getName())
+                .title(content.getTitle())
                 .likes(likes)
                 .views(views)
                 .description(content.getDescription())
@@ -90,7 +90,7 @@ public class ContentMapper {
     public FindContentResponse findContentResponseOf(Content content) {
         return FindContentResponse.builder()
                 .contentId(content.getId())
-                .name(content.getName())
+                .title(content.getTitle())
                 .description(content.getDescription())
                 .thumbnailImagePath(content.getThumbnailImagePath())
                 .build();
@@ -104,7 +104,7 @@ public class ContentMapper {
                 .build();
     }
     public void updateContent(Content content, UpdateContentRequest updateContentRequest){
-        Optional.ofNullable(updateContentRequest.getName()).ifPresent(content::setName);
+        Optional.ofNullable(updateContentRequest.getName()).ifPresent(content::setTitle);
         Optional.ofNullable(updateContentRequest.getTagId()).ifPresent(content::setTagId);
         Optional.ofNullable(updateContentRequest.getDescription()).ifPresent(content::setDescription);
         Optional.ofNullable(updateContentRequest.getBackGroundColorCode()).ifPresent(content::setBackGroundColorCode);

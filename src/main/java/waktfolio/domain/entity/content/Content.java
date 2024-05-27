@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Content extends BaseEntity {
     private UUID memberId;
     private UUID tagId;
-    private String name;
+    private String title;
     private String description;
     private String thumbnailImagePath;
     private String objectPath;

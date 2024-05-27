@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FindContentResponse {
     private UUID contentId;
-    private String name;
+    private String title;
     private String description;
     private String thumbnailImagePath;
     private Long likes;

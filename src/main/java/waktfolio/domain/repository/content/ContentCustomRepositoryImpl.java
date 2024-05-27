@@ -55,7 +55,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 queryFactory
                         .select(Projections.bean(FindContentDetail.class,
                                 content.id,
-                                content.name,
+                                content.title,
                                 content.objectPath,
                                 content.description,
                                 content.thumbnailImagePath,
@@ -77,11 +77,11 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
     @Override
     public List<Content> findByTagLikeIn(List<String> tags, Pageable pageable) {
         BooleanBuilder isTags = new BooleanBuilder();
-        BooleanBuilder isNames = new BooleanBuilder();
+        BooleanBuilder isTitles = new BooleanBuilder();
         BooleanBuilder isMemberNames = new BooleanBuilder();
         for (String temp : tags) {
             isTags.or(tag.name.containsIgnoreCase(temp));
-            isNames.or(content.name.containsIgnoreCase(temp));
+            isTitles.or(content.title.containsIgnoreCase(temp));
             isMemberNames.or(member.name.containsIgnoreCase(temp));
         }
         return queryFactory
@@ -89,7 +89,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .join(member).on(member.id.eq(content.memberId))
                 .join(tag).on(tag.id.eq(content.tagId))
                 .where(
-                        isTags.or(isNames.or(isMemberNames)),
+                        isTags.or(isTitles.or(isMemberNames)),
                         isUseYn(true)
                 )
                 .orderBy(
@@ -106,7 +106,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
                 .select(Projections.bean(FindContent.class,
                         content.id.as("contentId"),
                         member.name.as("memberName"),
-                        content.name,
+                        content.title,
                         content.thumbnailImagePath
                 ))
                 .from(content)
@@ -126,7 +126,7 @@ public class ContentCustomRepositoryImpl implements ContentCustomRepository {
         return queryFactory
                 .select(Projections.bean(FindContentDetail.class,
                         content.id,
-                        content.name,
+                        content.title,
                         content.objectPath,
                         content.description,
                         content.thumbnailImagePath,

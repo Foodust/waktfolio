@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FindContentDetail {
     private UUID id;
-    private String name;
+    private String title;
     private String objectPath;
     private String description;
     private String thumbnailImagePath;
