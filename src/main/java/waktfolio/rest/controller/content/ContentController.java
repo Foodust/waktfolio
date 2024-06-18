@@ -57,8 +57,8 @@ public class ContentController {
     @GetMapping("")
     @Tag(name = "그룹 검색하기")
     public ResponseEntity<ApiResponse> getAllContentGroup(HttpServletRequest request, @RequestParam @Nullable List<String> tags, Pageable pageable){
-        List<FindMemberResponse> allContentGroup = contentService.findAllContentGroup(tags,pageable);
-        return new ResponseEntity<>(ApiResponse.of(request,allContentGroup), HttpStatus.OK);
+        FindAllContentResponse allContents = contentService.findAllContentGroup(tags, pageable);
+        return new ResponseEntity<>(ApiResponse.of(request,allContents), HttpStatus.OK);
     }
 
     @GetMapping("/group/{memberId}")

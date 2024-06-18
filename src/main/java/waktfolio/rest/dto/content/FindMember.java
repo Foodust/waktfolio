@@ -11,10 +11,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindMemberResponse {
+public class FindMember {
     private UUID memberId;
     private String memberName;
     private String thumbnailImagePath;
-    private Long likes;
-    private Long views;
 }

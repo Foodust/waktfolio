@@ -32,7 +32,6 @@ import waktfolio.rest.dto.content.*;
 import waktfolio.rest.dto.log.Count;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -124,15 +123,15 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable) {
+    public FindAllContentResponse findAllContentGroup(List<String> tags, Pageable pageable) {
         List<Content> contents = contentRepository.findByTagLikeIn(tags != null ? tags : new ArrayList<>(), pageable);
-        Set<UUID> memberIds = contents.stream().map(Content::getMemberId).collect(Collectors.toSet());
-        List<Member> allGroups = memberRepository.findAllById(memberIds);
-        List<FindMemberResponse> findMemberResponse = new ArrayList<>();
-        allGroups.forEach(member -> {
-            findMemberResponse.add(contentMapper.findMemberResponseOf(member, getLikeMemberId(member.getId()), getViewMemberId(member.getId())));
+        List<FindContent> findContents = new ArrayList<>();
+        contents.forEach(content -> {
+            Member member = memberRepository.findById(content.getMemberId()).orElse(Member.builder().name("").build());
+            findContents.add(contentMapper.findContentOf(content, member.getName(), getLikeContentId(content.getId()), getViewContentId(content.getId())));
         });
-        return findMemberResponse;
+        List<Member> allGroups = memberRepository.findAllById(contents.stream().map(Content::getMemberId).collect(Collectors.toSet()));
+        return contentMapper.findAllContentResponseOf(findContents, allGroups.stream().map(contentMapper::findMemberResponseOf).toList());
     }
 
     @Override

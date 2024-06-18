@@ -11,7 +11,7 @@ public interface ContentService {
     void createContent(HttpServletRequest request,CreateContentRequest createContentRequest);
     void updateContent(HttpServletRequest request,UpdateContentRequest updateContentRequest);
     FindMainContentResponse getMainMember();
-    List<FindMemberResponse> findAllContentGroup(List<String> tags, Pageable pageable);
+    FindAllContentResponse findAllContentGroup(List<String> tags, Pageable pageable);
     List<FindContentResponse> getContentGroup(UUID memberId);
     FindContentDetailResponse getContent(HttpServletRequest request, UUID contentId);
     ViewResponse viewContent(UUID contentId);

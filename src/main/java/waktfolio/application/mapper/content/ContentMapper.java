@@ -19,13 +19,15 @@ public class ContentMapper {
                 .contentId(contentId)
                 .build();
     }
-    public DayLike dayLikeOf(UUID memberId, UUID contentId){
+
+    public DayLike dayLikeOf(UUID memberId, UUID contentId) {
         return DayLike.builder()
                 .memberId(memberId)
                 .contentId(contentId)
                 .build();
     }
-    public Content contentFrom(UUID memberId, CreateContentRequest createContentRequest){
+
+    public Content contentFrom(UUID memberId, CreateContentRequest createContentRequest) {
         return Content.builder()
                 .memberId(memberId)
                 .title(createContentRequest.getName())
@@ -38,7 +40,7 @@ public class ContentMapper {
                 .build();
     }
 
-    public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail, Long likes,Long views,Boolean isLike) {
+    public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail, Long likes, Long views, Boolean isLike) {
         return FindContentDetailResponse.builder()
                 .name(findContentDetail.getTitle())
                 .description(findContentDetail.getDescription())
@@ -54,6 +56,7 @@ public class ContentMapper {
                 .isLike(isLike)
                 .build();
     }
+
     public FindContentDetailResponse findContentDetailResponseOf(FindContentDetail findContentDetail) {
         return FindContentDetailResponse.builder()
                 .name(findContentDetail.getTitle())
@@ -67,13 +70,12 @@ public class ContentMapper {
                 .contentId(findContentDetail.getId())
                 .build();
     }
-    public FindMemberResponse findMemberResponseOf(Member member, Long likes, Long views) {
-        return FindMemberResponse.builder()
+
+    public FindMember findMemberResponseOf(Member member) {
+        return FindMember.builder()
                 .memberName(member.getName())
                 .memberId(member.getId())
                 .thumbnailImagePath(member.getProfileImagePath())
-                .likes(likes)
-                .views(views)
                 .build();
     }
 
@@ -87,14 +89,18 @@ public class ContentMapper {
                 .thumbnailImagePath(content.getThumbnailImagePath())
                 .build();
     }
-    public FindContentResponse findContentResponseOf(Content content) {
-        return FindContentResponse.builder()
+
+    public FindContent findContentOf(Content content,String memberName, Long likes, Long views) {
+        return FindContent.builder()
                 .contentId(content.getId())
                 .title(content.getTitle())
-                .description(content.getDescription())
+                .memberName(memberName)
                 .thumbnailImagePath(content.getThumbnailImagePath())
+                .likes(likes)
+                .views(views)
                 .build();
     }
+
     public FindMainContentResponse findMainContentResponseOf(List<FindContent> main, List<FindContent> createDate, List<FindContent> like, List<FindContent> view) {
         return FindMainContentResponse.builder()
                 .mainContent(main)
@@ -103,7 +109,15 @@ public class ContentMapper {
                 .viewContent(view)
                 .build();
     }
-    public void updateContent(Content content, UpdateContentRequest updateContentRequest){
+
+    public FindAllContentResponse findAllContentResponseOf(List<FindContent> findContent, List<FindMember> findMember) {
+        return FindAllContentResponse.builder()
+                .groups(findMember)
+                .contents(findContent)
+                .build();
+    }
+
+    public void updateContent(Content content, UpdateContentRequest updateContentRequest) {
         Optional.ofNullable(updateContentRequest.getName()).ifPresent(content::setTitle);
         Optional.ofNullable(updateContentRequest.getTagId()).ifPresent(content::setTagId);
         Optional.ofNullable(updateContentRequest.getDescription()).ifPresent(content::setDescription);
