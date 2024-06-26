@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: "jdbc:postgresql://waktfolio-db:5432/waktfolio"
-    username: postgres
-    password: "waktfolio!@"
+    username: ENC(UM2C3IflAZKYbpptLnMEZD20O/w2PJZY)
+    password: ENC(YA+ZiG5VG4/zcpzIAB4eVfnTDG1TCpSe)
   jpa:
     hibernate:
       ddl-auto: update
